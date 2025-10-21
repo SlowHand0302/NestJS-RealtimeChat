@@ -15,6 +15,16 @@
         "noImplicitAny": false,
         "strictBindCallApply": false,
         "forceConsistentCasingInFileNames": false,
-        "noFallthroughCasesInSwitch": false
+        "noFallthroughCasesInSwitch": false,
+        "paths": {
+            "@modules/*": ["./src/modules/*"],
+            "@dtos/*": ["./src/common/dtos/*"],
+            "@filters/*": ["./src/common/filters/*"],
+            "@configs/*": ["./src/common/configs/*"],
+            "@databases/*": ["./src/common/databases/*"],
+            "@decorators/*": ["./src/common/decorators/*"],
+            "@interfaces/*": ["./src/common/interfaces/*"],
+            "@interceptors/*": ["./src/common/interceptors/*"]
+        }
     }
 }
