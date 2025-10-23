@@ -1,10 +1,13 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CommonModule } from './common/common.module';
 import { ConfigModule } from '@nestjs/config';
-import { configSchema } from './common/configs/joi.schema';
-import { appConfig } from '@configs/app.config';
+import { CoreModule } from '@core/core.module';
+import { AppController } from './app.controller';
+import { appConfig } from '@infrastructure/config/app.config';
+import { configSchema } from '@infrastructure/config/joi.schema';
+import { ApplicationModule } from '@application/application.module';
+import { PresentationModule } from '@presentation/presentation.module';
+import { InfrastructureModule } from '@infrastructure/infrastructure.module';
 
 @Module({
     imports: [
@@ -19,7 +22,10 @@ import { appConfig } from '@configs/app.config';
             },
             load: [appConfig],
         }),
-        CommonModule,
+        CoreModule,
+        ApplicationModule,
+        PresentationModule,
+        InfrastructureModule,
     ],
     controllers: [AppController],
     providers: [AppService],

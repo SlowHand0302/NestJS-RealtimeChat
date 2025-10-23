@@ -17,14 +17,12 @@
         "forceConsistentCasingInFileNames": false,
         "noFallthroughCasesInSwitch": false,
         "paths": {
+            "@core/*": ["./src/core/*"],
+            "@shared/*": ["./src/shared/*"],
             "@modules/*": ["./src/modules/*"],
-            "@dtos/*": ["./src/common/dtos/*"],
-            "@filters/*": ["./src/common/filters/*"],
-            "@configs/*": ["./src/common/configs/*"],
-            "@databases/*": ["./src/common/databases/*"],
-            "@decorators/*": ["./src/common/decorators/*"],
-            "@interfaces/*": ["./src/common/interfaces/*"],
-            "@interceptors/*": ["./src/common/interceptors/*"]
+            "@application/*": ["./src/application/*"],
+            "@presentation/*": ["./src/presentation/*"],
+            "@infrastructure/*": ["./src/infrastructure/*"]
         }
     }
 }
