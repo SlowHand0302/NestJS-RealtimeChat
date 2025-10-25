@@ -1,0 +1,94 @@
+erDiagram
+    users ||--o{ room_members : joins
+    users ||--o{ messages : sends
+    users ||--o{ message_reactions : reacts
+    users ||--o{ notifications : receives
+    users ||--o{ chat_rooms : owns
+
+    chat_rooms ||--o{ room_members : contains
+    chat_rooms ||--o{ messages : has
+
+    messages ||--o{ message_reactions : receives
+    messages ||--o{ message_attachments : has
+    messages ||--o{ messages : replies_to
+
+    users {
+        uuid user_id PK
+        varchar username UK
+        varchar email UK
+        varchar password_hash
+        varchar display_name
+        text avatar_url
+        timestamp last_seen_at
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    chat_rooms {
+        uuid room_id PK
+        varchar room_name
+        text description
+        varchar room_type "direct, group"
+        uuid owner_id FK
+        varchar theme
+        varchar avatar_url
+        int max_members
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    room_members {
+        uuid membership_id PK
+        uuid room_id FK
+        uuid user_id FK
+        varchar role "admin, moderator, member"
+        boolean is_muted
+        varchar nickname
+        timestamp last_read_at
+        timestamp joined_at
+        timestamp left_at
+    }
+
+    messages {
+        uuid message_id PK
+        uuid room_id FK
+        uuid sender_id FK
+        uuid reply_to_id FK
+        varchar(10000) content
+        varchar message_type "text, image, video, voice, file, code, system"
+        timestamp created_at
+        timestamp updated_at
+        timestamp deleted_at
+    }
+
+    message_attachments {
+        uuid attachment_id PK
+        uuid message_id FK
+        varchar file_name
+        varchar file_type
+        int file_size
+        text file_url
+        text thumbnail_url
+        varchar status "uploading, completed, failed"
+        timestamp uploaded_at
+    }
+
+    message_reactions {
+        uuid reaction_id PK
+        uuid message_id FK
+        uuid user_id FK
+        varchar emoji
+        timestamp created_at
+    }
+
+    notifications {
+        uuid notification_id PK
+        uuid user_id FK
+        varchar notification_type "message, mention, reaction, system"
+        text title
+        text content
+        json data
+        boolean is_read
+        timestamp created_at
+        timestamp read_at
+    }
