@@ -11,8 +11,7 @@ async function bootstrap() {
     app.enableCors();
 
     await app.listen(appConfig.port);
-    console.log(
-        `Application is running on ${appConfig.environment} mode at: http://${appConfig.host}:${appConfig.port}`,
-    );
+    console.log(`🚀 Server running on http://localhost:${appConfig.port}`);
+    console.log(`📦 Environment: ${appConfig.environment}`);
 }
 bootstrap();

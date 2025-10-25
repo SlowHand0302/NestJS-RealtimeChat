@@ -7,6 +7,7 @@ import { appConfig } from '@infrastructure/config/app.config';
 import { configSchema } from '@infrastructure/config/joi.schema';
 import { ApplicationModule } from '@application/application.module';
 import { PresentationModule } from '@presentation/presentation.module';
+import { postgreSqlConfig } from '@infrastructure/config/postgreSql.config';
 import { InfrastructureModule } from '@infrastructure/infrastructure.module';
 
 @Module({
@@ -20,7 +21,7 @@ import { InfrastructureModule } from '@infrastructure/infrastructure.module';
             validationOptions: {
                 abortEarly: true,
             },
-            load: [appConfig],
+            load: [appConfig, postgreSqlConfig],
         }),
         CoreModule,
         ApplicationModule,
