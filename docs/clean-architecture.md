@@ -1,3 +1,4 @@
+```
 project-root/
 ├── src/
 │   ├── domain/                           # Enterprise Business Rules (innermost layer)
@@ -259,3 +260,4 @@ project-root/
 ├── docker-compose.yml                    # Docker services
 ├── Dockerfile
 └── README.md
+```
