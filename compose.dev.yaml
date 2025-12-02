@@ -1,0 +1,43 @@
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile.dev
+        image: realtime-chat:dev
+        container_name: realtime-chat-app
+        ports:
+            - '3000:3000'
+        volumes:
+            # Only mount src directory for hot reload
+            - ./src:/usr/src/app/src
+            - ./package.json:/usr/src/app/package.json
+            - ./pnpm-lock.yaml:/usr/src/app/pnpm-lock.yaml
+            - ./nest-cli.json:/usr/src/app/nest-cli.json
+            - ./tsconfig.json:/usr/src/app/tsconfig.json
+            - ./tsconfig.build.json:/usr/src/app/tsconfig.build.json
+            # Anonymous volumes for generated content
+            - /usr/src/app/node_modules
+            - /usr/src/app/dist
+        env_file:
+            - .env
+        environment:
+            - NODE_ENV=development
+            - WATCHPACK_POLLING=true
+            - CHOKIDAR_USEPOLLING=true
+            - CHOKIDAR_INTERVAL=500
+        command: sh -c "pnpm exec prisma generate && pnpm run start:dev"
+        stdin_open: true
+        tty: true
+        depends_on:
+            - postgres
+    postgres:
+        image: postgres:18-alpine
+        env_file:
+            - .env
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        ports:
+            - "${DB_PORT}:5432"
+        restart: unless-stopped
+volumes:
+    postgres_data:
