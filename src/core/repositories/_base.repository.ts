@@ -1,12 +1,12 @@
 import { QueryOptions } from './query-options.repository';
-import { IAggregateRoot } from '@core/entities/_aggregate-root.interface';
+import { AggregateRoot } from '@core/entities/_aggregate-root.interface';
 
-export interface IBaseRepository<T extends IAggregateRoot> {
+export interface IBaseRepository<T extends AggregateRoot> {
     findById(id: string): Promise<T | null>;
     findAll(options?: QueryOptions): Promise<T[]>;
     findOne(options?: QueryOptions): Promise<T | null>;
     findManyAndCount(options?: QueryOptions<T>): Promise<[T[], number]>;
-    create(entity: Partial<T>): Promise<T>;
+    save(entity: Partial<T>): Promise<T>;
     createMany(entities: Partial<T>[]): Promise<T[]>;
     update(id: string, entity: Partial<T>): Promise<T>;
     updateMany(where: Record<string, unknown>, data: Partial<T>): Promise<number>;
