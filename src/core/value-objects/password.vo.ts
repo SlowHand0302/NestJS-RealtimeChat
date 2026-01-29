@@ -1,23 +1,27 @@
 import * as bcrypt from 'bcrypt';
+import { BaseValueObject } from './_base.vo';
 
-export class PasswordVO {
-    private readonly _hash: string;
+interface HashedPasswordProps{
+    readonly hash: string;
+}
 
-    private constructor(hash: string) {
-        this._hash = hash;
+export class PasswordVO extends BaseValueObject<HashedPasswordProps>{
+    private static readonly BCRYPT_COST = 13;
+    private constructor(props: HashedPasswordProps){
+        super(props)
     }
 
-    static async create(plainPassword: string): Promise<PasswordVO> {
+    public static async create(plainPassword: string): Promise<PasswordVO> {
         this.validatePlainPassword(plainPassword);
-        const hash = await bcrypt.hash(plainPassword, 10);
-        return new PasswordVO(hash);
+        const hash = await bcrypt.hash(plainPassword, PasswordVO.BCRYPT_COST);
+        return new PasswordVO({hash});
     }
 
-    static fromHash(hash: string): PasswordVO {
+    public static reconstitute(hash: string): PasswordVO {
         if (!hash) {
             throw new Error('Password hash is required');
         }
-        return new PasswordVO(hash);
+        return new PasswordVO({hash});
     }
 
     private static validatePlainPassword(plainPassword: string): void {
@@ -45,10 +49,10 @@ export class PasswordVO {
     }
 
     async verify(plainPassword: string): Promise<boolean> {
-        return bcrypt.compare(plainPassword, this._hash);
+        return await bcrypt.compare(plainPassword, this.props.hash);
     }
 
     get hash(): string {
-        return this._hash;
+        return this.props.hash;
     }
 }

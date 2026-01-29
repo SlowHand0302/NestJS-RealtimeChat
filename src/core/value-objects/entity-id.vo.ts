@@ -1,29 +1,38 @@
-import { randomUUID } from 'crypto';
+import { BaseValueObject } from './_base.vo';
 
-export class EntityIdVO {
-    private readonly _value: string;
+interface EntityIdProps{
+    readonly value: string;
+}
 
-    constructor(value: string) {
-        if (!value) {
-            throw new Error('User ID is required');
-        }
-        this._value = value;
+export class EntityIdVO extends BaseValueObject<EntityIdProps>{
+    private constructor(props: EntityIdProps){
+        super(props)
     }
 
-    static create(value?: string): EntityIdVO {
-        return new EntityIdVO(value ?? randomUUID());
+    public static create(value: string): EntityIdVO {
+        if (!value?.trim()) {
+            throw new Error('Entity ID is required');
+        }
+        return new EntityIdVO({ value: value.trim() });
+    }
+
+    public static reconstitute(raw: string): EntityIdVO {
+        if (!raw?.trim()) {
+            throw new Error('Cannot reconstitute empty Entity ID');
+        }
+        return new EntityIdVO({ value: raw.trim() });
+    }
+
+    public static generate(): EntityIdVO {
+        return EntityIdVO.create(crypto.randomUUID());
     }
 
     get value(): string {
-        return this._value;
+        return this.props.value;
     }
 
-    equals(other: EntityIdVO): boolean {
-        if (!other) return false;
-        return this._value === other._value;
-    }
-
-    toString(): string {
-        return this._value;
+    public equals(other: EntityIdVO | null | undefined): boolean {
+        if (other == null) return false;
+        return this.props.value === other.props.value;
     }
 }

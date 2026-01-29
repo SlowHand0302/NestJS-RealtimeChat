@@ -1,13 +1,31 @@
-export class EmailVO {
-    private readonly _value: string;
+import { BaseValueObject } from "./_base.vo";
 
-    constructor(value: string) {
-        this.validate(value);
-        this._value = value.toLowerCase().trim();
+interface EmailProps {
+    readonly value: string;
+}
+
+export class EmailVO extends BaseValueObject<EmailProps>{
+    private constructor(props: EmailProps){
+        super(props);
     }
 
-    private validate(value: string): void {
-        if (!value) {
+    public static create(value: string): EmailVO {
+        this.validate(value);
+        const email = new EmailVO({value});
+        return email;
+    }
+
+    public static reconstitute(raw: EmailProps | string): EmailVO{
+        const value = typeof raw === 'string' ? raw : raw.value;
+        const normalized = value.trim().toLowerCase();
+        if (!normalized.includes('@')) {
+            throw new Error('Corrupted email data in persistence');
+        }
+        return new EmailVO({ value: normalized });
+    }
+
+    private static validate(value: string): void {
+        if (!value?.trim()) {
             throw new Error('Email is required');
         }
 
@@ -22,10 +40,6 @@ export class EmailVO {
     }
 
     get value(): string {
-        return this._value;
-    }
-
-    equals(other: EmailVO): boolean {
-        return this._value === other._value;
+        return this.props.value;
     }
 }
