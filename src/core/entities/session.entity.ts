@@ -1,5 +1,5 @@
 import { AggregateRoot } from './_aggregate-root.interface';
-import { EntityIdVO } from '@core/value-objects/entity-id.vo';
+import { IdentifierVO } from '@core/value-objects/identifier.vo';
 import { DeviceInfoVO } from '@core/value-objects/device-info.vo';
 
 export enum SessionStrategyPropEnum {
@@ -8,7 +8,7 @@ export enum SessionStrategyPropEnum {
 }
 
 interface SessionProps {
-    userId: EntityIdVO;
+    userId: IdentifierVO;
     refreshToken: string;
     deviceInfo: DeviceInfoVO;
     isRevoke: boolean;
@@ -19,7 +19,7 @@ interface SessionProps {
 export class Session extends AggregateRoot<SessionProps> {
     private constructor(
         props: SessionProps,
-        id?: EntityIdVO,
+        id?: IdentifierVO,
         timestamp?: {
             createdAt?: Date;
             updatedAt?: Date;
@@ -30,7 +30,7 @@ export class Session extends AggregateRoot<SessionProps> {
     }
 
     // Factory method for new session
-    public static create(userId: EntityIdVO, refreshToken: string, expireAt: Date, deviceInfo: DeviceInfoVO) {
+    public static create(userId: IdentifierVO, refreshToken: string, expireAt: Date, deviceInfo: DeviceInfoVO) {
         const session = new Session({
             userId,
             refreshToken,
@@ -45,7 +45,7 @@ export class Session extends AggregateRoot<SessionProps> {
     // Factory method for reconstitution from persistence
     public static reconstitute(
         props: SessionProps,
-        id?: EntityIdVO,
+        id?: IdentifierVO,
         timestamp?: {
             createdAt?: Date;
             updatedAt?: Date;

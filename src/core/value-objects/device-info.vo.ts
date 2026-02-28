@@ -1,8 +1,8 @@
-import { EntityIdVO } from './entity-id.vo';
+import { IdentifierVO } from './identifier.vo';
 
 export class DeviceInfoVO {
     constructor(
-        public readonly deviceId: EntityIdVO,
+        public readonly deviceId: IdentifierVO,
         public readonly deviceName: string | null,
         public readonly ipAddress: string | null,
         public readonly userAgent: string | null,

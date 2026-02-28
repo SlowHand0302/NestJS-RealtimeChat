@@ -1,22 +1,22 @@
-import { EntityIdVO } from '@core/value-objects/entity-id.vo';
+import { IdentifierVO } from '@core/value-objects/identifier.vo';
 
 export abstract class BaseEntity<Props = unknown> {
-    protected readonly _id: EntityIdVO;
+    protected readonly _id: IdentifierVO;
     protected props: Props;
     protected readonly _createdAt: Date;
     protected _updatedAt: Date;
     protected _deletedAt?: Date;
 
-    constructor(props: Props, id?: EntityIdVO, timestamp?: { createdAt?: Date; updatedAt?: Date; deletedAt?: Date }) {
+    constructor(props: Props, id?: IdentifierVO, timestamp?: { createdAt?: Date; updatedAt?: Date; deletedAt?: Date }) {
         this.props = props;
-        this._id = id ?? EntityIdVO.create();
+        this._id = id ?? IdentifierVO.create();
         this._createdAt = timestamp?.createdAt ?? new Date();
         this._updatedAt = timestamp?.updatedAt ?? new Date();
         this._deletedAt = timestamp?.deletedAt;
     }
 
-    public get id(): EntityIdVO {
-        return this.id;
+    public get id(): IdentifierVO {
+        return this._id;
     }
 
     public get createdAt(): Date {

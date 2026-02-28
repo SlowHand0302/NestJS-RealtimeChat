@@ -1,4 +1,4 @@
-import { EntityIdVO } from '@core/value-objects/entity-id.vo';
+import { IdentifierVO } from '@core/value-objects/identifier.vo';
 import { AggregateRoot } from './_aggregate-root.interface';
 import { Permission, PermissionActionPropEnum } from '@core/value-objects/permission.vo';
 
@@ -11,7 +11,7 @@ interface RoleProps {
 export class Role extends AggregateRoot<RoleProps> {
     private constructor(
         props: RoleProps,
-        id?: EntityIdVO,
+        id?: IdentifierVO,
         timestamp?: {
             createdAt: Date;
             updatedAt: Date;
@@ -30,7 +30,7 @@ export class Role extends AggregateRoot<RoleProps> {
     // Factory method for reconstitution from persistence
     public static reconstitute(
         props: RoleProps,
-        id?: EntityIdVO,
+        id?: IdentifierVO,
         timestamp?: {
             createdAt: Date;
             updatedAt: Date;
@@ -42,7 +42,7 @@ export class Role extends AggregateRoot<RoleProps> {
 
     // Business Methods
     public can(resource: string, action: PermissionActionPropEnum): boolean {
-        return this.props.permissions.some((p) => p.matches(resource, action));
+        return this.props.permissions.some((p) => p.equals(Permission.create(resource, action)));
     }
 
     public hasPermission(permission: Permission): boolean {
@@ -50,8 +50,8 @@ export class Role extends AggregateRoot<RoleProps> {
     }
 
     public addPermission(permission: Permission): void {
-        if (this.props.permissions.some((p) => permission.policyKey === p.policyKey)) {
-            throw new Error(`Permission ${permission.policyKey()} already exists in role ${this.props.name}`);
+        if (this.props.permissions.some((p) => p.equals(permission))) {
+            throw new Error(`Permission ${permission.toString()} already exists in role ${this.props.name}`);
         }
         this.props.permissions = [...this.props.permissions, permission];
     }
