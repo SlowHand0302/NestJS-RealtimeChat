@@ -2,12 +2,12 @@ import { Role } from './role.entity';
 import { EmailVO } from '@core/value-objects/email.vo';
 import { AggregateRoot } from './_aggregate-root.interface';
 import { PasswordVO } from '@core/value-objects/password.vo';
-import { EntityIdVO } from '@core/value-objects/entity-id.vo';
-import { UserDetail, UserDetailGenderPropEnum } from '../value-objects/user-detail.vo';
+import { IdentifierVO } from '@core/value-objects/identifier.vo';
+import { UserDetailInfo, UserDetailInfoProps } from '@core/value-objects/user-detail.vo';
 
 export enum UserStatusPropEnums {
     ACTIVE = 'active',
-    IN_ACTIVE = 'inactive',
+    INACTIVE = 'inactive',
     BANNED = 'banned',
     LOCKED = 'locked',
 }
@@ -17,26 +17,14 @@ interface UserProps {
     password: PasswordVO;
     emailVerified: boolean;
     status: UserStatusPropEnums;
-    roles?: Role[];
-    profile?: UserDetail;
-}
-
-interface UpdateDetailProps {
-    nickname?: string;
-    avatarUrl?: string;
-    gender?: UserDetailGenderPropEnum;
-    birthdate?: Date;
-    fullname?: string;
-    phoneNumber?: string;
-    location?: string;
-    language?: string;
-    socialLinks?: string[];
+    roles: Role[];
+    profile: UserDetailInfo | null;
 }
 
 export class User extends AggregateRoot<UserProps> {
     private constructor(
         props: UserProps,
-        id?: EntityIdVO,
+        id?: IdentifierVO,
         timestamp?: {
             createdAt?: Date;
             updatedAt?: Date;
@@ -48,14 +36,21 @@ export class User extends AggregateRoot<UserProps> {
 
     // Factory method for new users
     public static create(email: EmailVO, password: PasswordVO): User {
-        const user = new User({ email, password, emailVerified: false, status: UserStatusPropEnums.ACTIVE });
+        const user = new User({
+            email,
+            password,
+            emailVerified: false,
+            status: UserStatusPropEnums.ACTIVE,
+            roles: [],
+            profile: UserDetailInfo.create(null),
+        });
         return user;
     }
 
     // Factory method for reconstitution from persistence
     public static reconstitute(
         props: UserProps,
-        id?: EntityIdVO,
+        id?: IdentifierVO,
         timestamp?: {
             createdAt?: Date;
             updatedAt?: Date;
@@ -65,13 +60,25 @@ export class User extends AggregateRoot<UserProps> {
         return new User(props, id, timestamp);
     }
 
-    // Business Method
+    // Business Methods
+    public async verifyPassword(plainPassword: string): Promise<boolean> {
+        return this.props.password.verify(plainPassword);
+    }
+
     public async changePassword(currentPassword: string, newPassword: string): Promise<void> {
-        const isValid = this.password.verify(currentPassword);
+        const isValid = this.props.password.verify(currentPassword);
         if (!isValid) {
             throw new Error('Current password is incorrect');
         }
         this.props.password = await PasswordVO.create(newPassword);
+        this.touch();
+    }
+
+    public verifyEmail() {
+        if (this.props.emailVerified) {
+            return;
+        }
+        this.props.emailVerified = true;
         this.touch();
     }
 
@@ -90,10 +97,6 @@ export class User extends AggregateRoot<UserProps> {
         this.props.status = status;
     }
 
-    public async verifyPassword(plainPassword: string): Promise<boolean> {
-        return this.props.password.verify(plainPassword);
-    }
-
     public delete(): void {
         if (this.isDeleted()) {
             throw new Error('User is already deleted');
@@ -102,27 +105,11 @@ export class User extends AggregateRoot<UserProps> {
         this.touch();
     }
 
-    public updateProfile(params: UpdateDetailProps): void {
+    public updateProfile(params: UserDetailInfoProps): void {
         if (Object.values(params).every((v) => v === undefined || v === null)) {
             return;
         }
-
-        if (!this.props.profile) {
-            this.props.profile = new UserDetail();
-        }
-
-        const profile = this.props.profile;
-
-        if (params.nickname !== undefined) profile.nickname = params.nickname;
-        if (params.avatarUrl !== undefined) profile.avatarUrl = params.avatarUrl;
-        if (params.gender !== undefined) profile.gender = params.gender;
-        if (params.birthdate !== undefined) profile.birthdate = params.birthdate;
-        if (params.fullname !== undefined) profile.fullname = params.fullname;
-        if (params.phoneNumber !== undefined) profile.phoneNumber = params.phoneNumber;
-        if (params.location !== undefined) profile.location = params.location;
-        if (params.language !== undefined) profile.language = params.language;
-        if (params.socialLinks !== undefined) profile.socialLinks = [...params.socialLinks]; // copy
-
+        this.props.profile = UserDetailInfo.create(params);
         this.touch();
     }
 
@@ -162,8 +149,8 @@ export class User extends AggregateRoot<UserProps> {
         return this.props.emailVerified;
     }
 
-    public get profile(): UserDetail {
-        return this.props.profile ?? new UserDetail();
+    public get profile(): UserDetailInfo {
+        return this.props.profile ?? UserDetailInfo.create({});
     }
 
     public get roles(): ReadonlyArray<Role> {
