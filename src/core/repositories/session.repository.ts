@@ -1,13 +1,13 @@
-import { EntityIdVO } from '@core/value-objects/entity-id.vo';
 import { IBaseRepository } from './_base.repository';
 import { Session } from '@core/entities/session.entity';
+import { IdentifierVO } from '@core/value-objects/identifier.vo';
 
 export interface ISessionRepository extends IBaseRepository<Session> {
     findByRefreshToken(token: string): Promise<Session | null>;
-    findActiveSessionsByUserId(userId: EntityIdVO): Promise<Session[]>;
-    findByUserIdAndDeviceId(userId: EntityIdVO, deviceId: EntityIdVO): Promise<Session | null>;
-    revokeById(id: EntityIdVO): Promise<void>;
-    revokeAllByUserId(userId: EntityIdVO): Promise<void>;
-    revokeAllByUserIdExcept(userId: EntityIdVO, sessionId: EntityIdVO): Promise<void>;
+    findActiveSessionsByUserId(userId: IdentifierVO): Promise<Session[]>;
+    findByUserIdAndDeviceId(userId: IdentifierVO, deviceId: IdentifierVO): Promise<Session | null>;
+    revokeById(id: IdentifierVO): Promise<void>;
+    revokeAllByUserId(userId: IdentifierVO): Promise<void>;
+    revokeAllByUserIdExcept(userId: IdentifierVO, sessionId: IdentifierVO): Promise<void>;
     deleteExpired(): Promise<void>;
 }

@@ -1,9 +1,9 @@
 import { User } from '@core/entities/user.entity';
 import { ITokenService } from './token.service.interface';
+import { IdentifierVO } from '@core/value-objects/identifier.vo';
 import { DeviceInfoVO } from '@core/value-objects/device-info.vo';
 import { ISessionRepository } from '@core/repositories/session.repository';
 import { Session, SessionStrategyPropEnum } from '@core/entities/session.entity';
-import { EntityIdVO } from '@core/value-objects/entity-id.vo';
 
 export class SessionManagerService {
     constructor(
@@ -47,15 +47,15 @@ export class SessionManagerService {
         return { session: updatedSession, refreshToken: newRefreshToken };
     }
 
-    async revokeSession(sessionId: EntityIdVO): Promise<void> {
+    async revokeSession(sessionId: IdentifierVO): Promise<void> {
         await this.sessionRepository.revokeById(sessionId);
     }
 
-    async revokeAllUserSessions(userId: EntityIdVO): Promise<void> {
+    async revokeAllUserSessions(userId: IdentifierVO): Promise<void> {
         await this.sessionRepository.revokeAllByUserId(userId);
     }
 
-    async revokeOtherSessions(userId: EntityIdVO, currentSessionId: EntityIdVO): Promise<void> {
+    async revokeOtherSessions(userId: IdentifierVO, currentSessionId: IdentifierVO): Promise<void> {
         await this.sessionRepository.revokeAllByUserIdExcept(userId, currentSessionId);
     }
 }

@@ -1,10 +1,10 @@
 import { Role } from '@core/entities/role.entity';
 import { IBaseRepository } from './_base.repository';
-import { EntityIdVO } from '@core/value-objects/entity-id.vo';
+import { IdentifierVO } from '@core/value-objects/identifier.vo';
 
 export interface IRoleRepository extends IBaseRepository<Role> {
     findByName(name: string): Promise<Role | null>;
-    findByUserId(userId: EntityIdVO): Promise<Role[]>;
-    assignRoleToUser(userId: EntityIdVO, roleId: EntityIdVO): Promise<void>;
-    removeRoleFromUser(userId: EntityIdVO, roleId: EntityIdVO): Promise<void>;
+    findByUserId(userId: IdentifierVO): Promise<Role[]>;
+    assignRoleToUser(userId: IdentifierVO, roleId: IdentifierVO): Promise<void>;
+    removeRoleFromUser(userId: IdentifierVO, roleId: IdentifierVO): Promise<void>;
 }
