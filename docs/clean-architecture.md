@@ -1,32 +1,32 @@
 ```
 project-root/
 ├── src/
-│   ├── domain/                           # Enterprise Business Rules (innermost layer)
-│   │   ├── entities/                     # Domain entities (business objects)
+│   ├── domain/                           # Contains pure business rules, must be 100% independent(innermost layer)
+│   │   ├── entities/                     # Core business objects with identity and behavior (business objects)
 │   │   │   ├── user.entity.ts
 │   │   │   ├── order.entity.ts
 │   │   │   └── product.entity.ts
 │   │   │
-│   │   ├── value-objects/                # Immutable value objects
+│   │   ├── value-objects/                # Immutable value objects without identity
 │   │   │   ├── email.vo.ts
 │   │   │   ├── money.vo.ts
 │   │   │   └── address.vo.ts
 │   │   │
-│   │   ├── repositories/                 # Repository interfaces (ports)
+│   │   ├── repositories/                 # Repository interfaces (ports) for persistence
 │   │   │   ├── user.repository.interface.ts
 │   │   │   ├── order.repository.interface.ts
 │   │   │   └── product.repository.interface.ts
 │   │   │
-│   │   ├── services/                     # Domain services (pure business logic)
+│   │   ├── services/                     # Domain services that does not belong to a single entity.
 │   │   │   ├── pricing.service.ts
 │   │   │   └── inventory.service.ts
 │   │   │
-│   │   └── exceptions/                   # Domain-specific exceptions
+│   │   └── exceptions/                   # Exceptions: represent business error, not technical error
 │   │       ├── user-not-found.exception.ts
 │   │       └── insufficient-stock.exception.ts
 │   │
-│   ├── application/                      # Application Business Rules
-│   │   ├── use-cases/                    # Use cases (application services)
+│   ├── application/                      # Application Business Rules: orchestrate of domain logic
+│   │   ├── use-cases/                    # Use cases (application services): store business action
 │   │   │   ├── user/
 │   │   │   │   ├── create-user.use-case.ts
 │   │   │   │   ├── update-user-name.use-case.ts
@@ -42,7 +42,7 @@ project-root/
 │   │   │       ├── create-product.use-case.ts
 │   │   │       └── update-product-stock.use-case.ts
 │   │   │
-│   │   ├── dtos/                         # Application DTOs
+│   │   ├── dtos/                         # DTOs: represent use-case inputs/outputs, 100% independent
 │   │   │   ├── user/
 │   │   │   │   ├── create-user.dto.ts
 │   │   │   │   └── update-user.dto.ts
@@ -56,15 +56,15 @@ project-root/
 │   │   │   ├── payment.service.interface.ts
 │   │   │   └── logger.interface.ts
 │   │   │
-│   │   ├── mappers/                      # Application layer mappers
+│   │   ├── mappers/                      # Mappers: transform between Application DTOs and Domain entities
 │   │   │   ├── user.mapper.ts
 │   │   │   └── order.mapper.ts
 │   │   │
-│   │   └── exceptions/                   # Application-specific exceptions
+│   │   └── exceptions/                   # Exceptions: represent workflow problems,not business rule violations.
 │   │       ├── validation.exception.ts
 │   │       └── use-case.exception.ts
 │   │
-│   ├── infrastructure/                   # Frameworks & Drivers (outermost layer)
+│   ├── infrastructure/                   # Frameworks & Drivers (outermost layer): technical implementations
 │   │   ├── persistence/                  # Database implementations
 │   │   │   ├── typeorm/
 │   │   │   │   ├── entities/             # ORM entities
@@ -72,12 +72,12 @@ project-root/
 │   │   │   │   │   ├── order.entity.ts
 │   │   │   │   │   └── product.entity.ts
 │   │   │   │   │
-│   │   │   │   ├── repositories/         # Repository implementations
+│   │   │   │   ├── repositories/         # Repository implementations of domain repositories interfaces
 │   │   │   │   │   ├── typeorm-user.repository.ts
 │   │   │   │   │   ├── typeorm-order.repository.ts
 │   │   │   │   │   └── typeorm-product.repository.ts
 │   │   │   │   │
-│   │   │   │   ├── mappers/              # ORM to Domain mappers
+│   │   │   │   ├── mappers/              # Mappers: transform between ORM entities and Domain entities
 │   │   │   │   │   ├── user.mapper.ts
 │   │   │   │   │   └── order.mapper.ts
 │   │   │   │   │
@@ -85,7 +85,7 @@ project-root/
 │   │   │   │   │   ├── 1234567890-CreateUserTable.ts
 │   │   │   │   │   └── 1234567891-CreateOrderTable.ts
 │   │   │   │   │
-│   │   │   │   └── seeds/                # Database seeders
+│   │   │   │   └── seeds/                # Database seeders: populate initial data
 │   │   │   │       └── user.seeder.ts
 │   │   │   │
 │   │   │   └── prisma/                   # Alternative: Prisma
@@ -93,7 +93,7 @@ project-root/
 │   │   │       ├── repositories/
 │   │   │       └── migrations/
 │   │   │
-│   │   ├── adapters/                     # External service adapters
+│   │   ├── adapters/                     # External service adapters implementations
 │   │   │   ├── email/
 │   │   │   │   ├── sendgrid.adapter.ts
 │   │   │   │   └── smtp.adapter.ts
@@ -117,7 +117,7 @@ project-root/
 │   │   │       ├── kafka.producer.ts
 │   │   │       └── kafka.consumer.ts
 │   │   │
-│   │   ├── config/                       # Configuration
+│   │   ├── config/                       # Configuration: Centralized application configuration management
 │   │   │   ├── database.config.ts
 │   │   │   ├── cache.config.ts
 │   │   │   ├── queue.config.ts
@@ -145,7 +145,7 @@ project-root/
 │   │       ├── queue.module.ts
 │   │       └── messaging.module.ts
 │   │
-│   ├── presentation/                     # Interface Adapters (Controllers, GraphQL, etc.)
+│   ├── presentation/                     # Interface Adapters(Controllers, GraphQL,): communicate with the outside
 │   │   ├── http/                         # REST API
 │   │   │   ├── controllers/              # REST controllers
 │   │   │   │   ├── user.controller.ts
@@ -162,11 +162,11 @@ project-root/
 │   │   │   │       ├── create-order-request.dto.ts
 │   │   │   │       └── order-response.dto.ts
 │   │   │   │
-│   │   │   ├── mappers/                  # HTTP to Application layer mappers
+│   │   │   ├── mappers/                  # Mappers: transform between HTTP DTOs and Application DTOs
 │   │   │   │   ├── user-http.mapper.ts
 │   │   │   │   └── order-http.mapper.ts
 │   │   │   │
-│   │   │   └── validators/               # Custom validators
+│   │   │   └── validators/               # Custom validators for request
 │   │   │       ├── is-strong-password.validator.ts
 │   │   │       └── is-valid-email.validator.ts
 │   │   │
