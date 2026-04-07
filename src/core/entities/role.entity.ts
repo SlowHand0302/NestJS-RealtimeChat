@@ -1,6 +1,6 @@
-import { IdentifierVO } from '@core/value-objects/identifier.vo';
 import { AggregateRoot } from './_aggregate-root.interface';
-import { Permission, PermissionActionPropEnum } from '@core/value-objects/permission.vo';
+import { IdentifierVO } from '@core/value-objects/identifier.vo';
+import { Permission, PermissionActionPropEnum } from './permission.entity';
 
 interface RoleProps {
     name: string;
@@ -42,27 +42,37 @@ export class Role extends AggregateRoot<RoleProps> {
 
     // Business Methods
     public can(resource: string, action: PermissionActionPropEnum): boolean {
-        return this.props.permissions.some((p) => p.equals(Permission.create(resource, action)));
+        return this.props.permissions.some((p) => p.matches(resource, action));
     }
 
     public hasPermission(permission: Permission): boolean {
-        return this.permissions.some((p) => p.equals(permission));
+        return this.permissions.some((p) => p.id.equals(permission.id));
     }
 
-    public addPermission(permission: Permission): void {
+    public assignPermission(permission: Permission): void {
         if (this.props.permissions.some((p) => p.equals(permission))) {
             throw new Error(`Permission ${permission.toString()} already exists in role ${this.props.name}`);
         }
         this.props.permissions = [...this.props.permissions, permission];
+        this.touch();
     }
 
-    public removePermission(permission: Permission): void {
-        this.props.permissions = this.props.permissions.filter((p) => p.equals(permission));
+    public revokePermission(permission: Permission): void {
+        const exists = this.props.permissions.some((p) => p.id.equals(permission.id));
+        if (!exists) {
+            throw new Error(`Permission not found in role ${this.props.name}`);
+        }
+        this.props.permissions = this.props.permissions.filter((p) => !p.id.equals(permission.id));
+        this.touch();
     }
 
     // Getters
     public get name(): string {
         return this.props.name;
+    }
+
+    public get description(): string {
+        return this.props.description ?? '';
     }
 
     public get permissions(): Permission[] {

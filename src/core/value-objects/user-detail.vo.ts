@@ -14,8 +14,8 @@ export interface UserDetailInfoProps {
     readonly birthdate?: Date;
     readonly fullname?: string;
     readonly phoneNumber?: string;
-    readonly language?: string; // usually ISO 639-1 or BCP-47 code
-    readonly socialLinks?: readonly string[];
+    // readonly language?: string; // usually ISO 639-1 or BCP-47 code
+    // readonly socialLinks?: readonly string[];
 }
 
 export class UserDetailInfo extends BaseValueObject<UserDetailInfoProps> {
@@ -32,10 +32,10 @@ export class UserDetailInfo extends BaseValueObject<UserDetailInfoProps> {
             birthdate: input.birthdate,
             fullname: input.fullname?.trim() || undefined,
             phoneNumber: input.phoneNumber?.trim() || undefined,
-            language: input.language?.trim().toLowerCase() || undefined,
-            socialLinks: input.socialLinks
-                ? [...new Set(input.socialLinks.map((link) => link.trim()).filter(Boolean))]
-                : undefined,
+            // language: input.language?.trim().toLowerCase() || undefined,
+            // socialLinks: input.socialLinks
+            //     ? [...new Set(input.socialLinks.map((link) => link.trim()).filter(Boolean))]
+            //     : undefined,
         };
 
         // Minimal defensive business rules (expand later)
@@ -51,9 +51,9 @@ export class UserDetailInfo extends BaseValueObject<UserDetailInfoProps> {
             throw new Error('Birthdate cannot be in the future');
         }
 
-        if (props.language && props.language.length > 10) {
-            throw new Error('Language code appears to be invalid');
-        }
+        // if (props.language && props.language.length > 10) {
+        //     throw new Error('Language code appears to be invalid');
+        // }
 
         if (props.avatarUrl && !props.avatarUrl.startsWith('http')) {
             throw new Error('Avatar URL must start with http/https');
@@ -81,12 +81,12 @@ export class UserDetailInfo extends BaseValueObject<UserDetailInfoProps> {
     public get phoneNumber() {
         return this.props.phoneNumber;
     }
-    public get language() {
-        return this.props.language;
-    }
-    public get socialLinks() {
-        return this.props.socialLinks;
-    }
+    // public get language() {
+    //     return this.props.language;
+    // }
+    // public get socialLinks() {
+    //     return this.props.socialLinks;
+    // }
 
     // Small domain behaviors (easy to test & reuse)
     public hasAvatar(): boolean {
@@ -108,7 +108,7 @@ export class UserDetailInfo extends BaseValueObject<UserDetailInfoProps> {
         return age !== undefined && age >= 18;
     }
 
-    public hasSocialLinks(): boolean {
-        return Array.isArray(this.props.socialLinks) && this.props.socialLinks.length > 0;
-    }
+    // public hasSocialLinks(): boolean {
+    //     return Array.isArray(this.props.socialLinks) && this.props.socialLinks.length > 0;
+    // }
 }
