@@ -1,0 +1,46 @@
+// add schemas prisma to implement mapper between persistence and domain
+enum UserStatus {
+    ACTIVE   @map("active")
+    INACTIVE @map("inactive")
+    BANNED   @map("banned")
+    LOCKED   @map("locked")
+
+    @@map("user_status")
+}
+
+model User {
+    id            String  @id @default(uuid())
+    email         String  @unique @map("email") @db.Citext
+    passwordHash  String  @map("password_hash")
+    emailVerified Boolean @default(false) @map("email_verified")
+
+    status    UserStatus   @default(ACTIVE)
+    userRoles UserRole[]
+    profile   UserProfile?
+
+    createdAt DateTime  @default(now()) @map("created_at")
+    updatedAt DateTime  @updatedAt @map("updated_at")
+    deletedAt DateTime? @map("deleted_at")
+
+    @@index([status, createdAt, updatedAt, deletedAt])
+    @@index([email])
+    @@map("users")
+}
+
+model UserProfile {
+    userId String @unique @map("user_id")
+
+    nickname    String?
+    fullname    String?
+    avatarUrl   String? @map("avatar_url")
+    phoneNumber String? @map("phone_number")
+    gender      String?
+    birthdate   DateTime?
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@id([userId])
+    @@index([nickname])
+    @@index([fullname])
+    @@map("user_profiles")
+}

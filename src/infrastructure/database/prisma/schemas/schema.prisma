@@ -6,7 +6,7 @@
 
 generator client {
   provider     = "prisma-client"
-  output       = "../prisma/generated"
+  output       = "../../prisma/generated"
   moduleFormat = "cjs"
 }
 
