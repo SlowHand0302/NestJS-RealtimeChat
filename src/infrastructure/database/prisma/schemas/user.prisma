@@ -9,18 +9,16 @@ enum UserStatus {
 }
 
 model User {
-    id            String  @id @default(uuid())
-    email         String  @unique @map("email") @db.Citext
-    passwordHash  String  @map("password_hash")
-    emailVerified Boolean @default(false) @map("email_verified")
-
-    status    UserStatus   @default(ACTIVE)
-    userRoles UserRole[]
-    profile   UserProfile?
-
-    createdAt DateTime  @default(now()) @map("created_at")
-    updatedAt DateTime  @updatedAt @map("updated_at")
-    deletedAt DateTime? @map("deleted_at")
+    id            String       @id @default(uuid())
+    email         String       @unique @map("email") @db.Citext
+    passwordHash  String       @map("password_hash")
+    emailVerified Boolean      @default(false) @map("email_verified")
+    createdAt     DateTime     @default(now()) @map("created_at")
+    updatedAt     DateTime     @updatedAt @map("updated_at")
+    deletedAt     DateTime?    @map("deleted_at")
+    status        UserStatus   @default(ACTIVE)
+    userRoles     UserRole[]
+    profile       UserProfile?
 
     @@index([status, createdAt, updatedAt, deletedAt])
     @@index([email])
@@ -28,12 +26,11 @@ model User {
 }
 
 model UserProfile {
-    userId String @unique @map("user_id")
-
+    userId      String    @unique @map("user_id")
     nickname    String?
     fullname    String?
-    avatarUrl   String? @map("avatar_url")
-    phoneNumber String? @map("phone_number")
+    avatarUrl   String?   @map("avatar_url")
+    phoneNumber String?   @map("phone_number")
     gender      String?
     birthdate   DateTime?
 

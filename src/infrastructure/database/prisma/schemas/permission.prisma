@@ -9,20 +9,20 @@ enum PermissionAction {
 }
 
 model Permission {
-    id          String           @id @default(uuid())
-    subject     String
-    action      PermissionAction
-    description String?
-    fields      String[]
-    conditions  Json             @db.JsonB
-    inverted    Boolean          @default(false)
-    createdAt   DateTime         @default(now())
-    updatedAt   DateTime         @updatedAt
-    deletedAt   DateTime?
+    id              String           @id @default(uuid())
+    subject         String
+    description     String?
+    fields          String[]
+    conditions      Json             @db.JsonB
+    inverted        Boolean          @default(false)
+    createdAt       DateTime         @default(now()) @map("created_at")
+    updatedAt       DateTime         @updatedAt @map("updated_at")
+    deletedAt       DateTime?        @map("deleted_at")
+    action          PermissionAction
+    rolePermissions RolePermission[]
 
     @@unique([subject, action])
     @@index([inverted])
     @@index([subject])
     @@map("permissions")
-    rolePermissions RolePermission[]
 }
