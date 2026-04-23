@@ -33,8 +33,8 @@ export class SessionManagerService {
 
         const session = Session.create(user.id, refreshToken, expiresAt, deviceInfo);
 
-        const savedSession = await this.sessionRepository.save(session);
-        return { session: savedSession, refreshToken };
+        await this.sessionRepository.save(session);
+        return { session: session, refreshToken };
     }
 
     async rotateSession(session: Session): Promise<{ session: Session; refreshToken: string }> {
@@ -42,9 +42,9 @@ export class SessionManagerService {
         const newExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
         session.rotate(newRefreshToken, newExpiresAt);
-        const updatedSession = await this.sessionRepository.save(session);
+        await this.sessionRepository.save(session);
 
-        return { session: updatedSession, refreshToken: newRefreshToken };
+        return { session: session, refreshToken: newRefreshToken };
     }
 
     async revokeSession(sessionId: IdentifierVO): Promise<void> {
