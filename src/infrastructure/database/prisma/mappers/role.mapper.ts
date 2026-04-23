@@ -8,12 +8,12 @@ import { Role as RoleEntity } from '@core/entities/role.entity';
 import { IdentifierVO } from '@core/value-objects/identifier.vo';
 
 type RoleWithPermission = PrismaRole & {
-    permissions: (PrismaRolePermission & { permission: PrismaPermission })[];
+    rolePermissions: (PrismaRolePermission & { permission: PrismaPermission })[];
 };
 
 export class RoleMapper {
     static toDomain(prisma: RoleWithPermission): RoleEntity {
-        const permissions = prisma.permissions.map((prismaPermission) =>
+        const permissions = prisma.rolePermissions.map((prismaPermission) =>
             PermissionMapper.toDomain(prismaPermission.permission),
         );
 

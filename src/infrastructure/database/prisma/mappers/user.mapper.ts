@@ -14,9 +14,9 @@ import { RoleMapper } from './role.mapper';
 import { Gender, UserDetailInfo } from '@core/value-objects/user-detail.vo';
 
 type UserWithRelations = PrismaUser & {
-    roles: (PrismaUserRole & {
+    userRoles: (PrismaUserRole & {
         role: PrismaRole & {
-            permissions: (PrismaRolePermission & {
+            rolePermissions: (PrismaRolePermission & {
                 permission: PrismaPermission;
             })[];
         };
@@ -26,7 +26,7 @@ type UserWithRelations = PrismaUser & {
 
 export class UserMapper {
     static toDomain(prisma: UserWithRelations) {
-        const roles = prisma.roles.map((prismaRole) => RoleMapper.toDomain(prismaRole.role));
+        const roles = prisma.userRoles.map((prismaRole) => RoleMapper.toDomain(prismaRole.role));
         const profile = UserMapper.toUserDetailVO(prisma);
 
         return UserEntity.reconstitute(
