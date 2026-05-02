@@ -2,7 +2,7 @@ import { FilterOperator } from '@core/criteria/filter-operator';
 import { FilterCondition, FieldFilter } from '@core/criteria/criteria';
 import { AggregateRoot } from '@core/entities/_aggregate-root.interface';
 
-export class PrismaUserQueryMapper {
+export class PrismaQueryMapper {
     private static readonly operatorMap: Record<FilterOperator, string> = {
         equals: 'equals',
         not: 'not',
