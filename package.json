@@ -94,8 +94,8 @@
     },
     "lint-staged": {
         "*.ts": [
-            "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-            "prettier --write \"src/**/*.ts\" \"test/**/*.ts\""
+            "eslint --fix",
+            "prettier --write"
         ]
     }
 }
