@@ -16,9 +16,13 @@ export interface IBaseRepository<T extends AggregateRoot> {
     create(entity: T): Promise<void>;
     createMany(entities: T[]): Promise<void>;
     update(id: IdentifierVO, entity: T): Promise<void>;
-    updateMany(where: FilterCondition<T, keyof T>, entity: T): Promise<void>;
+    updateMany(entities: T[]): Promise<void>;
+    archive(id: IdentifierVO): Promise<void>;
+    archiveMany(entities: T[]): Promise<void>;
+    restore(id: IdentifierVO): Promise<void>;
+    restoreMany(entities: T[]): Promise<void>;
     delete(id: IdentifierVO): Promise<void>;
-    deleteMany(where: FilterCondition<T, keyof T>): Promise<void>;
+    deleteMany(ids: IdentifierVO[]): Promise<void>;
     count(where?: FilterCondition<T, keyof T>): Promise<number>;
     exists(where: FilterCondition<T, keyof T>): Promise<boolean>;
 }
