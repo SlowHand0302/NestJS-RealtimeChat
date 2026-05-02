@@ -2,5 +2,5 @@ import { Permission, PermissionActionPropEnum } from '@core/entities/permission.
 import { IBaseRepository } from './_base.repository';
 
 export interface IPermissionRepository extends IBaseRepository<Permission> {
-    findByResourceAndAction(resource: string, action: PermissionActionPropEnum): Promise<Permission | null>;
+    findByResourceAndAction(subject: string, action: PermissionActionPropEnum): Promise<Permission | null>;
 }

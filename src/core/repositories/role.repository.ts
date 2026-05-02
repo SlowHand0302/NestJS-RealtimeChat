@@ -7,4 +7,5 @@ export interface IRoleRepository extends IBaseRepository<Role> {
     findByUserId(userId: IdentifierVO): Promise<Role[]>;
     assignRoleToUser(userId: IdentifierVO, roleId: IdentifierVO): Promise<void>;
     removeRoleFromUser(userId: IdentifierVO, roleId: IdentifierVO): Promise<void>;
+    syncUserRoles(userId: string, roleIds: string[]): Promise<void>;
 }
