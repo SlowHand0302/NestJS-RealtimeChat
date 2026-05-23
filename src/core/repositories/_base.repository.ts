@@ -11,7 +11,7 @@ export interface FilterOptions<T extends AggregateRoot, K extends keyof T> {
 export interface IBaseRepository<T extends AggregateRoot> {
     findById(id: IdentifierVO): Promise<T | null>;
     findAll(options?: FilterOptions<T, keyof T>): Promise<T[]>;
-    findOne(where?: FilterCondition<T, keyof T>): Promise<T | null>;
+    findOne(condition?: FilterCondition<T, keyof T>): Promise<T | null>;
     save(entity: T): Promise<void>;
     create(entity: T): Promise<void>;
     createMany(entities: T[]): Promise<void>;
@@ -23,6 +23,6 @@ export interface IBaseRepository<T extends AggregateRoot> {
     restoreMany(entities: T[]): Promise<void>;
     delete(id: IdentifierVO): Promise<void>;
     deleteMany(ids: IdentifierVO[]): Promise<void>;
-    count(where?: FilterCondition<T, keyof T>): Promise<number>;
-    exists(where: FilterCondition<T, keyof T>): Promise<boolean>;
+    count(condition?: FilterCondition<T, keyof T>): Promise<number>;
+    exists(condition: FilterCondition<T, keyof T>): Promise<boolean>;
 }

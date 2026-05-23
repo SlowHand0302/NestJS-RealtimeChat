@@ -91,6 +91,10 @@ export class Session extends AggregateRoot<SessionProps> {
     }
 
     // Getters
+    get userId(): string {
+        return this.props.userId.value;
+    }
+
     get refreshToken(): string {
         return this.props.refreshToken;
     }
@@ -105,5 +109,9 @@ export class Session extends AggregateRoot<SessionProps> {
 
     get lastUsedAt(): Date {
         return this.props.lastUsedAt;
+    }
+
+    get deviceInfo(): DeviceInfoVO {
+        return this.props.deviceInfo;
     }
 }
