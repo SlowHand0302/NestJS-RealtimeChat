@@ -1,8 +1,8 @@
 import { Role } from './role.entity';
 import { EmailVO } from '@core/value-objects/email.vo';
 import { AggregateRoot } from './_aggregate-root.interface';
-import { PasswordVO } from '@core/value-objects/password.vo';
 import { IdentifierVO } from '@core/value-objects/identifier.vo';
+import { HashedPasswordVO } from '@core/value-objects/hashed-password.vo';
 import { UserDetailInfo, UserDetailInfoProps } from '@core/value-objects/user-detail.vo';
 
 export enum UserStatusPropEnums {
@@ -14,7 +14,7 @@ export enum UserStatusPropEnums {
 
 interface UserProps {
     email: EmailVO;
-    password: PasswordVO;
+    password: HashedPasswordVO;
     emailVerified: boolean;
     status: UserStatusPropEnums;
     roles: Role[];
@@ -35,7 +35,7 @@ export class User extends AggregateRoot<UserProps> {
     }
 
     // Factory method for new users
-    public static create(email: EmailVO, password: PasswordVO): User {
+    public static create(email: EmailVO, password: HashedPasswordVO): User {
         const user = new User({
             email,
             password,
@@ -61,16 +61,8 @@ export class User extends AggregateRoot<UserProps> {
     }
 
     // Business Methods
-    public async verifyPassword(plainPassword: string): Promise<boolean> {
-        return this.props.password.verify(plainPassword);
-    }
-
-    public async changePassword(currentPassword: string, newPassword: string): Promise<void> {
-        const isValid = this.props.password.verify(currentPassword);
-        if (!isValid) {
-            throw new Error('Current password is incorrect');
-        }
-        this.props.password = await PasswordVO.create(newPassword);
+    public changePassword(newPassword: HashedPasswordVO): void {
+        this.props.password = newPassword;
         this.touch();
     }
 
@@ -137,7 +129,7 @@ export class User extends AggregateRoot<UserProps> {
         return this.props.email;
     }
 
-    public get password(): PasswordVO {
+    public get password(): HashedPasswordVO {
         return this.props.password;
     }
 

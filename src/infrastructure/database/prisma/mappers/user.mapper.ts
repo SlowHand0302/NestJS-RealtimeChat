@@ -8,10 +8,10 @@ import {
     RolePermission as PrismaRolePermission,
 } from '../generated/client';
 import { EmailVO } from '@core/value-objects/email.vo';
-import { PasswordVO } from '@core/value-objects/password.vo';
 import { IdentifierVO } from '@core/value-objects/identifier.vo';
 import { RoleMapper } from './role.mapper';
 import { Gender, UserDetailInfo } from '@core/value-objects/user-detail.vo';
+import { HashedPasswordVO } from '@core/value-objects/hashed-password.vo';
 
 type UserWithRelations = PrismaUser & {
     userRoles: (PrismaUserRole & {
@@ -32,7 +32,7 @@ export class UserMapper {
         return UserEntity.reconstitute(
             {
                 email: EmailVO.reconstitute(prisma.email),
-                password: PasswordVO.reconstitute(prisma.passwordHash),
+                password: HashedPasswordVO.reconstitute(prisma.passwordHash),
                 emailVerified: false,
                 status: prisma.status as UserStatusPropEnums,
                 roles: roles,
@@ -51,7 +51,7 @@ export class UserMapper {
         return {
             id: user.id.value,
             email: user.email.value,
-            passwordHash: user.password.hash,
+            passwordHash: user.password.value,
             emailVerified: user.emailVerified,
             status: user.status,
             profile: user.hasProfile() ? { ...user.profile.props, userId: user.id.value } : undefined,
