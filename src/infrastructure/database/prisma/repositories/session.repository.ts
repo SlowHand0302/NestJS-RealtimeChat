@@ -1,12 +1,12 @@
-import { FilterCondition } from '@core/criteria/criteria';
+import { Prisma } from '../generated/client';
 import { Session } from '@core/entities/session.entity';
-import { FilterOptions } from '@core/repositories/_base.repository';
-import { ISessionRepository } from '@core/repositories/session.repository';
-import { IdentifierVO } from '@core/value-objects/identifier.vo';
+import { FilterCondition } from '@core/criteria/criteria';
 import { PrismaService } from '../service/prisma.service';
 import { SessionMapper } from '../mappers/session.mapper';
+import { IdentifierVO } from '@core/value-objects/identifier.vo';
 import { PrismaQueryMapper } from '../mappers/prisma-query.mapper';
-import { Prisma } from '../generated/client';
+import { FilterOptions } from '@core/repositories/_base.repository';
+import { ISessionRepository } from '@core/repositories/session.repository';
 
 export class SessionRepository implements ISessionRepository {
     constructor(private readonly prisma: PrismaService) {}
@@ -37,7 +37,7 @@ export class SessionRepository implements ISessionRepository {
     async findByRefreshToken(token: string): Promise<Session | null> {
         const prismaSession = await this.prisma.session.findUnique({
             where: {
-                refreshToken: token,
+                refreshTokenHash: token,
             },
         });
         return prismaSession ? SessionMapper.toDomain(prismaSession) : null;

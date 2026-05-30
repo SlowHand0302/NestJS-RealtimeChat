@@ -1,20 +1,23 @@
 import { User } from '@core/entities/user.entity';
-import { ITokenService } from './token.service.interface';
 import { IdentifierVO } from '@core/value-objects/identifier.vo';
 import { DeviceInfoVO } from '@core/value-objects/device-info.vo';
+import { ITokenService } from '../interfaces/token-service.interface';
 import { ISessionRepository } from '@core/repositories/session.repository';
 import { Session, SessionStrategyPropEnum } from '@core/entities/session.entity';
+import { IRefreshTokenHasher } from '@core/interfaces/refresh-token-hasher.interface';
 
 export class SessionManagerService {
     constructor(
         private readonly tokenService: ITokenService,
         private readonly sessionRepository: ISessionRepository,
+        private readonly refreshTokenHasher: IRefreshTokenHasher,
     ) {}
 
     async createSession(
         user: User,
         deviceInfo: DeviceInfoVO,
         strategy: SessionStrategyPropEnum,
+        expiresAt: Date,
     ): Promise<{ session: Session; refreshToken: string }> {
         // Single device: revoke all existing sessions
         if (strategy === SessionStrategyPropEnum.SINGLE_DEVICE) {
@@ -28,21 +31,31 @@ export class SessionManagerService {
             }
         }
 
-        const refreshToken = this.tokenService.generateRefreshToken();
-        const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+        const session = Session.create(user.id, expiresAt, deviceInfo);
 
-        const session = Session.create(user.id, refreshToken, expiresAt, deviceInfo);
+        const refreshToken = await this.tokenService.generateRefreshToken({
+            sub: user.id.value,
+            sessionId: session.id.value,
+        });
 
-        await this.sessionRepository.save(session);
+        const hashedRefreshToken = await this.refreshTokenHasher.hash(refreshToken);
+
+        session.assignRefreshTokenHash(hashedRefreshToken);
+
+        await this.sessionRepository.create(session);
         return { session: session, refreshToken };
     }
 
-    async rotateSession(session: Session): Promise<{ session: Session; refreshToken: string }> {
-        const newRefreshToken = this.tokenService.generateRefreshToken();
-        const newExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    async rotateSession(session: Session, expiresAt: Date): Promise<{ session: Session; refreshToken: string }> {
+        const newRefreshToken = await this.tokenService.generateRefreshToken({
+            sub: session.userId,
+            sessionId: session.id.value,
+        });
 
-        session.rotate(newRefreshToken, newExpiresAt);
-        await this.sessionRepository.save(session);
+        const newRefreshTokenHash = await this.refreshTokenHasher.hash(newRefreshToken);
+
+        session.rotate(newRefreshTokenHash, expiresAt);
+        await this.sessionRepository.update(session.id, session);
 
         return { session: session, refreshToken: newRefreshToken };
     }

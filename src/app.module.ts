@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
-import { CoreModule } from '@core/core.module';
 import { AppController } from './app.controller';
 import { appConfig } from '@infrastructure/config/app.config';
 import { configSchema } from '@infrastructure/config/joi.schema';
@@ -23,7 +22,6 @@ import { InfrastructureModule } from '@infrastructure/infrastructure.module';
             },
             load: [appConfig, postgreSqlConfig],
         }),
-        CoreModule,
         ApplicationModule,
         PresentationModule,
         InfrastructureModule,

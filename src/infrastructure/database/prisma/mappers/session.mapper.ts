@@ -14,9 +14,9 @@ export class SessionMapper {
         return SessionEntity.reconstitute(
             {
                 userId: IdentifierVO.reconstitute(prisma.userId),
-                refreshToken: prisma.refreshToken,
+                refreshTokenHash: prisma.refreshTokenHash,
                 deviceInfo: deviceInfo,
-                isRevoke: prisma.isRevoked ?? false,
+                isRevoked: prisma.isRevoked ?? false,
                 expireAt: prisma.expiresAt,
                 lastUsedAt: prisma.lastUsedAt,
             },
@@ -24,7 +24,6 @@ export class SessionMapper {
             {
                 createdAt: prisma.createdAt,
                 updatedAt: prisma.updatedAt,
-                deletedAt: prisma.deletedAt,
             },
         );
     }
@@ -33,7 +32,7 @@ export class SessionMapper {
         return {
             id: session.id.value,
             userId: session.userId,
-            refreshToken: session.refreshToken,
+            refreshTokenHash: session.refreshTokenHash,
             deviceId: session.deviceInfo.deviceId,
             deviceName: session.deviceInfo.deviceName,
             ipAddress: session.deviceInfo.ipAddress,

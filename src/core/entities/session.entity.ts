@@ -9,9 +9,9 @@ export enum SessionStrategyPropEnum {
 
 interface SessionProps {
     userId: IdentifierVO;
-    refreshToken: string;
+    refreshTokenHash: string;
     deviceInfo: DeviceInfoVO;
-    isRevoke: boolean;
+    isRevoked: boolean;
     expireAt: Date;
     lastUsedAt: Date;
 }
@@ -30,13 +30,13 @@ export class Session extends AggregateRoot<SessionProps> {
     }
 
     // Factory method for new session
-    public static create(userId: IdentifierVO, refreshToken: string, expireAt: Date, deviceInfo: DeviceInfoVO) {
+    public static create(userId: IdentifierVO, expireAt: Date, deviceInfo: DeviceInfoVO) {
         const session = new Session({
             userId,
-            refreshToken,
+            refreshTokenHash: '',
             expireAt,
             deviceInfo,
-            isRevoke: false,
+            isRevoked: false,
             lastUsedAt: new Date(),
         });
         return session;
@@ -57,7 +57,7 @@ export class Session extends AggregateRoot<SessionProps> {
 
     // Business Methods
     public isValid(): boolean {
-        return !this.props.isRevoke && new Date() < this.props.expireAt;
+        return !this.props.isRevoked && new Date() < this.props.expireAt;
     }
 
     public isExpired(): boolean {
@@ -65,18 +65,18 @@ export class Session extends AggregateRoot<SessionProps> {
     }
 
     public revoke(): void {
-        if (this.props.isRevoke) {
+        if (this.props.isRevoked) {
             throw new Error('Session already revoked');
         }
-        this.props.isRevoke = true;
+        this.props.isRevoked = true;
         this.touch();
     }
 
-    public rotate(newRefreshToken: string, newExpireAt: Date): void {
+    public rotate(newRefreshTokenHash: string, newExpireAt: Date): void {
         if (!this.isValid()) {
             throw new Error('Cannot rotate invalid session');
         }
-        this.props.refreshToken = newRefreshToken;
+        this.props.refreshTokenHash = newRefreshTokenHash;
         this.props.expireAt = newExpireAt;
         this.recordUsage();
     }
@@ -90,17 +90,25 @@ export class Session extends AggregateRoot<SessionProps> {
         return this.props.deviceInfo.equals(other);
     }
 
+    public assignRefreshTokenHash(refreshTokenHash: string): void {
+        if (this.props.refreshTokenHash) {
+            throw new Error('Refresh token already assigned');
+        }
+        this.props.refreshTokenHash = refreshTokenHash;
+        this.touch();
+    }
+
     // Getters
     get userId(): string {
         return this.props.userId.value;
     }
 
-    get refreshToken(): string {
-        return this.props.refreshToken;
+    get refreshTokenHash(): string {
+        return this.props.refreshTokenHash;
     }
 
     get isRevoked(): boolean {
-        return this.props.isRevoke;
+        return this.props.isRevoked;
     }
 
     get expiresAt(): Date {
