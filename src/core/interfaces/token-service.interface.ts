@@ -1,3 +1,4 @@
+export const TOKEN_SERVICE = Symbol('ITokenService');
 export interface AccessTokenPayload {
     sub: string;
     email: string;
