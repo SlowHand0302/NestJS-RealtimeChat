@@ -1,9 +1,20 @@
+import { PermissionActionPropEnum } from '@core/entities/permission.entity';
+
 export const TOKEN_SERVICE = Symbol('ITokenService');
+
+export interface PermissionClaim {
+    action: PermissionActionPropEnum;
+    subject: string;
+    fields?: readonly string[];
+    conditions?: Record<string, unknown>;
+    inverted?: boolean;
+}
+
 export interface AccessTokenPayload {
     sub: string;
     email: string;
     roles?: string[];
-    permissions?: string[];
+    permissions?: PermissionClaim[];
     sessionId?: string;
 }
 

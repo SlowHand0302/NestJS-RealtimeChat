@@ -3,14 +3,12 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JWT_REFRESH_STRATEGY } from '@infrastructure/config/passport.config';
 import { RefreshTokenPayload } from '@core/interfaces/token-service.interface';
-
-export interface RefreshTokenRequest extends RefreshTokenPayload {
-    refreshToken: string;
-}
+import { RefreshAuthenticatedPrincipal } from '@infrastructure/principals/refresh-authenticated.principal';
 
 @Injectable()
-export class JwtRefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
+export class JwtRefreshTokenStrategy extends PassportStrategy(Strategy, JWT_REFRESH_STRATEGY) {
     constructor(configService: ConfigService) {
         super({
             // Try HttpOnly cookie first, then Authorization header
@@ -24,7 +22,7 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-ref
         });
     }
 
-    async validate(req: Request, payload: RefreshTokenPayload): Promise<RefreshTokenRequest> {
+    async validate(req: Request, payload: RefreshTokenPayload): Promise<RefreshAuthenticatedPrincipal> {
         if (!payload.sub || !payload.sessionId) {
             throw new UnauthorizedException('Malformed refresh token');
         }
@@ -37,6 +35,10 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-ref
             throw new UnauthorizedException('Refresh token not found');
         }
 
-        return { ...payload, refreshToken };
+        return {
+            id: payload.sub,
+            sessionId: payload.sessionId,
+            refreshToken,
+        };
     }
 }
