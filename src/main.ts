@@ -1,9 +1,11 @@
+import cookieParser from 'cookie-parser';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
+import { ValidationPipe } from '@nestjs/common';
+
+import { AppModule } from './app.module';
 import { AppConfig } from '@infrastructure/config/app.config';
 import configSwagger from '@infrastructure/config/swagger.config';
-import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -12,6 +14,7 @@ async function bootstrap() {
 
     configSwagger(app);
     app.enableCors();
+    app.use(cookieParser());
 
     // setting to enable validation through class-validator
     app.useGlobalPipes(
