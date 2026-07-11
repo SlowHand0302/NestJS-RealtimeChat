@@ -2,10 +2,10 @@ import { Reflector } from '@nestjs/core';
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { PolicyHandler } from '@infrastructure/casl/policy-handler.interface';
-import { PolicyContext } from '@infrastructure/casl/policy-context.interface';
 import { CaslAbilityFactory } from '@infrastructure/casl/casl-ability.factory';
 import { VERIFY_POLICIES_KEY } from '@infrastructure/decorators/verify-policies.decorator';
 import { AuthenticatedRequest } from '@infrastructure/http-requests/authenticated.request';
+import { PolicyContext, RouteHandlerFn } from '@infrastructure/casl/policy-context.interface';
 
 @Injectable()
 export class PoliciesGuard implements CanActivate {
@@ -35,7 +35,7 @@ export class PoliciesGuard implements CanActivate {
             principal,
             request,
             executionContext: context,
-            handler: context.getHandler(),
+            handler: context.getHandler() as RouteHandlerFn,
             controller: context.getClass(),
         };
         for (const handler of handlers) {

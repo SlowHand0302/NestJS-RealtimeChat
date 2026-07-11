@@ -4,6 +4,8 @@ import { ExecutionContext, Type } from '@nestjs/common';
 import { AppAbility } from './casl-ability.types';
 import { AuthenticatedPrincipal } from '@infrastructure/principals/authenticated.principal';
 
+export type RouteHandlerFn = (...args: unknown[]) => unknown;
+
 export interface PolicyContext {
     /**
      * CASL ability built from the authenticated principal.
