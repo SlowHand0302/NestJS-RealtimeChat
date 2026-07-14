@@ -9,5 +9,5 @@ export interface AppConfig {
 export const appConfig = registerAs<AppConfig>('app', () => ({
     host: process.env.HOST || 'localhost',
     port: process.env.PORT || '3000',
-    environment: process.env.ENVIRONMENT || 'development',
+    environment: process.env.NODE_ENV || 'development',
 }));
