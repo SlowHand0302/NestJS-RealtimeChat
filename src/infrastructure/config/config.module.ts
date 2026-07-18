@@ -5,6 +5,7 @@ import { appConfig } from './app.config';
 import { jwtConfig } from './jwt.config';
 import { configSchema } from './joi.schema';
 import { postgreSqlConfig } from './postgreSql.config';
+import { cookieConfig } from './cookie.config';
 
 @Module({
     imports: [
@@ -17,7 +18,7 @@ import { postgreSqlConfig } from './postgreSql.config';
             validationOptions: {
                 abortEarly: true,
             },
-            load: [appConfig, jwtConfig, postgreSqlConfig],
+            load: [appConfig, jwtConfig, postgreSqlConfig, cookieConfig],
         }),
     ],
     exports: [NestConfigModule],
