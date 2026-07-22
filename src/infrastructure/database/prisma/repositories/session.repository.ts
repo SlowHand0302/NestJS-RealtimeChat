@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { Prisma } from '../generated/client';
 import { Session } from '@core/entities/session.entity';
 import { FilterCondition } from '@core/criteria/criteria';
@@ -8,6 +9,7 @@ import { PrismaQueryMapper } from '../mappers/prisma-query.mapper';
 import { FilterOptions } from '@core/repositories/_base.repository';
 import { ISessionRepository } from '@core/repositories/session.repository';
 
+@Injectable()
 export class SessionRepository implements ISessionRepository {
     constructor(private readonly prisma: PrismaService) {}
 

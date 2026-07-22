@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { IRefreshTokenHasher } from '@core/interfaces/refresh-token-hasher.interface';
 
 @Injectable()
-export class BcryptPasswordHasher implements IRefreshTokenHasher {
+export class BcryptRefreshTokenHasher implements IRefreshTokenHasher {
     private readonly saltRounds: number;
 
     constructor(private readonly configService: ConfigService) {
