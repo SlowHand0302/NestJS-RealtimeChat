@@ -1,22 +1,26 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { BaseUseCase } from '../_base.use-case';
 import { IdentifierVO } from '@core/value-objects/identifier.vo';
-import { IUserRepository } from '@core/repositories/user.repository';
-import { ITokenService } from '@core/interfaces/token-service.interface';
 import { RefreshTokenDto } from '@application/dtos/auth/refresh-token.dto';
-import { ISessionRepository } from '@core/repositories/session.repository';
 import { SessionManagerService } from '@core/services/session-manager.service';
-import { IRefreshTokenHasher } from '@core/interfaces/refresh-token-hasher.interface';
+import { IUserRepository, USER_REPOSITORY } from '@core/repositories/user.repository';
 import { RefreshTokenResponseDto } from '@application/dtos/auth/refresh-token.response';
+import { ITokenService, TOKEN_SERVICE } from '@core/interfaces/token-service.interface';
+import { ISessionRepository, SESSION_REPOSITORY } from '@core/repositories/session.repository';
+import { IRefreshTokenHasher, REFRESH_TOKEN_HASHER } from '@core/interfaces/refresh-token-hasher.interface';
 
 @Injectable()
 export class RefreshTokenUseCase extends BaseUseCase<RefreshTokenDto, RefreshTokenResponseDto> {
     constructor(
+        @Inject(TOKEN_SERVICE)
         private readonly tokenService: ITokenService,
+        @Inject(USER_REPOSITORY)
         private readonly userRepository: IUserRepository,
         private readonly sessionManager: SessionManagerService,
+        @Inject(SESSION_REPOSITORY)
         private readonly sessionRepository: ISessionRepository,
+        @Inject(REFRESH_TOKEN_HASHER)
         private readonly refreshTokenHasher: IRefreshTokenHasher,
     ) {
         super();

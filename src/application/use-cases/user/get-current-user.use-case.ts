@@ -1,14 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 
 import { BaseUseCase } from '../_base.use-case';
 import { IdentifierVO } from '@core/value-objects/identifier.vo';
-import { IUserRepository } from '@core/repositories/user.repository';
+import { IUserRepository, USER_REPOSITORY } from '@core/repositories/user.repository';
 import { GetCurrentUserDto } from '@application/dtos/user/get-current-user.dto';
 import { GetCurrentUserUseCaseResponseDto } from '@application/dtos/user/get-current-user.response';
 
 @Injectable()
 export class GetCurrentUserUseCase extends BaseUseCase<GetCurrentUserDto, GetCurrentUserUseCaseResponseDto> {
-    constructor(private readonly userRepository: IUserRepository) {
+    constructor(
+        @Inject(USER_REPOSITORY)
+        private readonly userRepository: IUserRepository,
+    ) {
         super();
     }
     async execute(input: GetCurrentUserDto): Promise<GetCurrentUserUseCaseResponseDto> {

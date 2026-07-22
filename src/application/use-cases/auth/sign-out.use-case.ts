@@ -1,13 +1,16 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { BaseUseCase } from '../_base.use-case';
 import { SignOutDto } from '@application/dtos/auth/sign-out.dto';
 import { IdentifierVO } from '@core/value-objects/identifier.vo';
-import { ISessionRepository } from '@core/repositories/session.repository';
+import { ISessionRepository, SESSION_REPOSITORY } from '@core/repositories/session.repository';
 
 @Injectable()
 export class SignOutUseCase extends BaseUseCase<SignOutDto, void> {
-    constructor(private readonly sessionRepository: ISessionRepository) {
+    constructor(
+        @Inject(SESSION_REPOSITORY)
+        private readonly sessionRepository: ISessionRepository,
+    ) {
         super();
     }
     async execute(input: SignOutDto): Promise<void> {

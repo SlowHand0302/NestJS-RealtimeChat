@@ -1,18 +1,20 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Inject, Injectable } from '@nestjs/common';
 
 import { BaseUseCase } from '../_base.use-case';
 import { EmailVO } from '@core/value-objects/email.vo';
 import { SignUpDto } from '@application/dtos/auth/sign-up.dto';
 import { User as UserEntity } from '@core/entities/user.entity';
-import { IUserRepository } from '@core/repositories/user.repository';
 import { PlainPasswordVO } from '@core/value-objects/plain-password.vo';
 import { SignUpResponseDto } from '@application/dtos/auth/sign-up.response';
-import { IPasswordHasher } from '@core/interfaces/password-hasher.interface';
+import { IUserRepository, USER_REPOSITORY } from '@core/repositories/user.repository';
+import { IPasswordHasher, PASSWORD_HASHER } from '@core/interfaces/password-hasher.interface';
 
 @Injectable()
 export default class SignUpUseCase extends BaseUseCase<SignUpDto, SignUpResponseDto> {
     constructor(
+        @Inject(USER_REPOSITORY)
         private readonly userRepository: IUserRepository,
+        @Inject(PASSWORD_HASHER)
         private readonly passwordHasher: IPasswordHasher,
     ) {
         super();

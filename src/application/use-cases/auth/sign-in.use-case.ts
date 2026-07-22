@@ -1,21 +1,24 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { BaseUseCase } from '../_base.use-case';
 import { EmailVO } from '@core/value-objects/email.vo';
 import { SignInDto } from '@application/dtos/auth/sign-in.dto';
-import { IUserRepository } from '@core/repositories/user.repository';
 import { PlainPasswordVO } from '@core/value-objects/plain-password.vo';
 import { SessionStrategyPropEnum } from '@core/entities/session.entity';
-import { ITokenService } from '@core/interfaces/token-service.interface';
 import { SignInResponseDto } from '@application/dtos/auth/sign-in.response';
-import { IPasswordHasher } from '@core/interfaces/password-hasher.interface';
 import { SessionManagerService } from '@core/services/session-manager.service';
+import { IUserRepository, USER_REPOSITORY } from '@core/repositories/user.repository';
+import { ITokenService, TOKEN_SERVICE } from '@core/interfaces/token-service.interface';
+import { IPasswordHasher, PASSWORD_HASHER } from '@core/interfaces/password-hasher.interface';
 
 @Injectable()
 export class SignInUseCase extends BaseUseCase<SignInDto, SignInResponseDto> {
     constructor(
+        @Inject(TOKEN_SERVICE)
         private readonly tokenService: ITokenService,
+        @Inject(USER_REPOSITORY)
         private readonly userRepository: IUserRepository,
+        @Inject(PASSWORD_HASHER)
         private readonly passwordHasher: IPasswordHasher,
         private readonly sessionManager: SessionManagerService,
     ) {

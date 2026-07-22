@@ -1,14 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import { BaseUseCase } from '../_base.use-case';
 import { IdentifierVO } from '@core/value-objects/identifier.vo';
-import { ISessionRepository } from '@core/repositories/session.repository';
 import { GetActiveSessionDto } from '@application/dtos/session/get-active-session.dto';
+import { ISessionRepository, SESSION_REPOSITORY } from '@core/repositories/session.repository';
 import { GetActiveSessionResponseDto } from '@application/dtos/session/get-active-session.response';
 
 @Injectable()
 export class GetActiveSessionUseCase extends BaseUseCase<GetActiveSessionDto, GetActiveSessionResponseDto[]> {
-    constructor(private readonly sessionRepository: ISessionRepository) {
+    constructor(
+        @Inject(SESSION_REPOSITORY)
+        private readonly sessionRepository: ISessionRepository,
+    ) {
         super();
     }
     async execute(input: GetActiveSessionDto): Promise<GetActiveSessionResponseDto[]> {
