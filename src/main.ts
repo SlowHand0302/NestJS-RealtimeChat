@@ -6,6 +6,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { AppConfig } from '@infrastructure/config/app.config';
 import configSwagger from '@infrastructure/config/swagger.config';
+import { SuccessResponseInterceptor } from '@infrastructure/interceptors/success-response.interceptor';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -24,6 +25,8 @@ async function bootstrap() {
             forbidNonWhitelisted: true, // throws an error if extra properties are present
         }),
     );
+
+    app.useGlobalInterceptors(new SuccessResponseInterceptor());
 
     await app.listen(appConfig.port);
     console.log(`🚀 Server running on http://localhost:${appConfig.port}`);
