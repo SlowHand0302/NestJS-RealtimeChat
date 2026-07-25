@@ -7,9 +7,11 @@ import { ConfigModule } from './config/config.module';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { DatabaseModule } from './database/database.module';
 import { JWT_ACCESS_STRATEGY } from './config/passport.config';
+import { NestConfigAdapter } from './adapters/nest-config.adapter';
 import { JwtRefreshTokenGuard } from './guards/jwt-refresh-token.guard';
 import { TOKEN_SERVICE } from '@core/interfaces/token-service.interface';
 import { PASSWORD_HASHER } from '@core/interfaces/password-hasher.interface';
+import { CONFIG_PROVIDER } from '@core/interfaces/config-provider.interface';
 import { JwtTokenAdapter } from './adapters/authentication/jwt-token.adapter';
 import { JwtAccessTokenStrategy } from './strategies/jwt-access-token.strategy';
 import { JwtRefreshTokenStrategy } from './strategies/jwt-refresh-token.strategy';
@@ -34,6 +36,10 @@ import { BcryptRefreshTokenHasher } from './adapters/authentication/bcrypt-refre
             useClass: JwtTokenAdapter,
         },
         {
+            provide: CONFIG_PROVIDER,
+            useClass: NestConfigAdapter,
+        },
+        {
             provide: PASSWORD_HASHER,
             useClass: BcryptPasswordHasher,
         },
@@ -48,9 +54,11 @@ import { BcryptRefreshTokenHasher } from './adapters/authentication/bcrypt-refre
     ],
     exports: [
         TOKEN_SERVICE,
+        CONFIG_PROVIDER,
         PASSWORD_HASHER,
         REFRESH_TOKEN_HASHER,
         JwtAuthGuard,
+        DatabaseModule,
         PassportModule,
         JwtRefreshTokenGuard,
         JwtAccessTokenStrategy,

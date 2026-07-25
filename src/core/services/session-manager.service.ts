@@ -1,18 +1,24 @@
-import { ConfigService } from '@nestjs/config';
+import { Inject, Injectable } from '@nestjs/common';
 
 import { User } from '@core/entities/user.entity';
 import { IdentifierVO } from '@core/value-objects/identifier.vo';
 import { DeviceInfoVO } from '@core/value-objects/device-info.vo';
-import { ITokenService } from '../interfaces/token-service.interface';
-import { ISessionRepository } from '@core/repositories/session.repository';
 import { Session, SessionStrategyPropEnum } from '@core/entities/session.entity';
-import { IRefreshTokenHasher } from '@core/interfaces/refresh-token-hasher.interface';
+import { ITokenService, TOKEN_SERVICE } from '../interfaces/token-service.interface';
+import { CONFIG_PROVIDER, IConfigProvider } from '@core/interfaces/config-provider.interface';
+import { ISessionRepository, SESSION_REPOSITORY } from '@core/repositories/session.repository';
+import { IRefreshTokenHasher, REFRESH_TOKEN_HASHER } from '@core/interfaces/refresh-token-hasher.interface';
 
+@Injectable()
 export class SessionManagerService {
     constructor(
+        @Inject(TOKEN_SERVICE)
         private readonly tokenService: ITokenService,
-        private readonly configService: ConfigService,
+        @Inject(CONFIG_PROVIDER)
+        private readonly configService: IConfigProvider,
+        @Inject(SESSION_REPOSITORY)
         private readonly sessionRepository: ISessionRepository,
+        @Inject(REFRESH_TOKEN_HASHER)
         private readonly refreshTokenHasher: IRefreshTokenHasher,
     ) {}
 
@@ -33,7 +39,7 @@ export class SessionManagerService {
             }
         }
 
-        const expiresAt = this.parseTtlToDate(this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRES_IN'));
+        const expiresAt = this.parseTtlToDate(this.configService.getRefreshTokenTtl());
         const session = Session.create(user.id, expiresAt, deviceInfo);
 
         const refreshToken = await this.tokenService.generateRefreshToken({
@@ -50,7 +56,7 @@ export class SessionManagerService {
     }
 
     async rotateSession(session: Session): Promise<{ session: Session; refreshToken: string }> {
-        const expiresAt = this.parseTtlToDate(this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRES_IN'));
+        const expiresAt = this.parseTtlToDate(this.configService.getRefreshTokenTtl());
         const newRefreshToken = await this.tokenService.generateRefreshToken({
             sub: session.userId,
             sessionId: session.id.value,
