@@ -146,65 +146,41 @@ project-root/
 │   │       └── messaging.module.ts
 │   │
 │   ├── presentation/                     # Interface Adapters(Controllers, GraphQL,): communicate with the outside
-│   │   ├── http/                         # REST API
-│   │   │   ├── controllers/              # REST controllers
-│   │   │   │   ├── user.controller.ts
-│   │   │   │   ├── order.controller.ts
-│   │   │   │   └── product.controller.ts
-│   │   │   │
-│   │   │   ├── dtos/                     # API request/response DTOs
-│   │   │   │   ├── user/
+│   │   ├── schema.gql
+│   │   ├── user/
+│   │   │   ├── user.module.ts
+│   │   │   ├── http/                         # REST API
+│   │   │   │   ├── user.controller.ts        # REST controllers
+│   │   │   │   ├── user-http.mapper.ts
+│   │   │   │   ├── dtos/                     # API request/response DTOs
 │   │   │   │   │   ├── create-user-request.dto.ts
 │   │   │   │   │   ├── update-user-request.dto.ts
-│   │   │   │   │   └── user-response.dto.ts
+│   │   │   │   │   ├── user-response.dto.ts
+│   │   │   │   │   └── ...
 │   │   │   │   │
-│   │   │   │   └── order/
-│   │   │   │       ├── create-order-request.dto.ts
-│   │   │   │       └── order-response.dto.ts
+│   │   │   │   └── validators/               # Custom validators for request
+│   │   │   │       ├── is-strong-password.validator.ts
+│   │   │   │       ├── is-valid-email.validator.ts
+│   │   │   │       └── ...
 │   │   │   │
-│   │   │   ├── mappers/                  # Mappers: transform between HTTP DTOs and Application DTOs
-│   │   │   │   ├── user-http.mapper.ts
-│   │   │   │   └── order-http.mapper.ts
-│   │   │   │
-│   │   │   └── validators/               # Custom validators for request
-│   │   │       ├── is-strong-password.validator.ts
-│   │   │       └── is-valid-email.validator.ts
-│   │   │
-│   │   ├── graphql/                      # GraphQL API (if needed)
-│   │   │   ├── resolvers/
+│   │   │   ├── graphql/                      # GraphQL API (if needed)
 │   │   │   │   ├── user.resolver.ts
-│   │   │   │   └── order.resolver.ts
+│   │   │   │   ├── user-graphql.mapper.ts
+│   │   │   │   ├── types/
+│   │   │   │   │   ├── user.type.ts
+│   │   │   │   │   └── ...
+│   │   │   │   │
+│   │   │   │   └── inputs/
+│   │   │   │       ├── create-user.input.ts
+│   │   │   │       └── ...
 │   │   │   │
-│   │   │   ├── types/
-│   │   │   │   ├── user.type.ts
-│   │   │   │   └── order.type.ts
-│   │   │   │
-│   │   │   ├── inputs/
-│   │   │   │   ├── create-user.input.ts
-│   │   │   │   └── update-user.input.ts
-│   │   │   │
-│   │   │   └── schema.gql
-│   │   │
-│   │   ├── cli/                          # CLI commands (if needed)
-│   │   │   └── commands/
-│   │   │       └── seed-database.command.ts
-│   │   │
-│   │   └── websocket/                    # WebSocket gateways (if needed)
-│   │       └── gateways/
-│   │           └── notifications.gateway.ts
-│   │
-│   ├── modules/                          # Feature modules (organizing layers)
-│   │   ├── user/
-│   │   │   └── user.module.ts            # Binds all user-related dependencies
-│   │   │
-│   │   ├── order/
-│   │   │   └── order.module.ts
-│   │   │
-│   │   ├── product/
-│   │   │   └── product.module.ts
-│   │   │
-│   │   └── shared/
-│   │       └── shared.module.ts
+│   │   │   └── websocket/                    # WebSocket gateways (if needed)
+│   │   │       ├── user-websocket.mapper.ts
+│   │   │       └── gateways/
+│   │   │           └── notifications.gateway.ts
+│   │   └── cli/                          # CLI commands (if needed)
+│   │       └── commands/
+│   │           └── seed-database.command.ts
 │   │
 │   ├── shared/                           # Shared utilities (use sparingly)
 │   │   ├── utils/
