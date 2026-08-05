@@ -78,7 +78,7 @@ export class RoleRepository implements IRoleRepository {
         ]);
     }
 
-    async findById(id: IdentifierVO): Promise<Role> {
+    async findById(id: IdentifierVO): Promise<Role | null> {
         const prismaRole = await this.prisma.role.findUnique({
             where: { id: id.value },
             include: roleWithRelations,

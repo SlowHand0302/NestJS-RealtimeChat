@@ -2,7 +2,7 @@ import { map, Observable } from 'rxjs';
 import { Request, Response } from 'express';
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 
-import { ApiSuccessResponse } from '@presentation/http/dtos/shared/success.response';
+import { ApiSuccessResponse } from '@presentation/shared/dtos/success.response';
 
 @Injectable()
 export class SuccessResponseInterceptor<T> implements NestInterceptor<T, ApiSuccessResponse<T>> {

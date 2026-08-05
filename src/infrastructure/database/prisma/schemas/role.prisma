@@ -1,12 +1,13 @@
 model Role {
-    id          String     @id @default(uuid())
-    name        String     @unique
+    id          String    @id @default(uuid())
+    name        String    @unique
     description String?
-    createdAt   DateTime   @default(now()) @map("created_at")
-    updatedAt   DateTime   @updatedAt @map("updated_at")
-    deletedAt   DateTime?  @map("deleted_at")
-    userRoles   UserRole[]
+    createdAt   DateTime  @default(now()) @map("created_at")
+    updatedAt   DateTime  @updatedAt @map("updated_at")
+    deletedAt   DateTime? @map("deleted_at")
+
+    userRoles       UserRole[]
+    rolePermissions RolePermission[]
 
     @@map("roles")
-    rolePermissions RolePermission[]
 }

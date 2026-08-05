@@ -9,17 +9,19 @@ enum UserStatus {
 }
 
 model User {
-    id            String       @id @default(uuid())
-    email         String       @unique @map("email") @db.Citext
-    passwordHash  String       @map("password_hash")
-    emailVerified Boolean      @default(false) @map("email_verified")
-    createdAt     DateTime     @default(now()) @map("created_at")
-    updatedAt     DateTime     @updatedAt @map("updated_at")
-    deletedAt     DateTime?    @map("deleted_at")
-    status        UserStatus   @default(ACTIVE)
-    userRoles     UserRole[]
-    sessions      Session[]
-    profile       UserProfile?
+    id            String    @id @default(uuid())
+    email         String    @unique @map("email") @db.Citext
+    passwordHash  String    @map("password_hash")
+    emailVerified Boolean   @default(false) @map("email_verified")
+    createdAt     DateTime  @default(now()) @map("created_at")
+    updatedAt     DateTime  @updatedAt @map("updated_at")
+    deletedAt     DateTime? @map("deleted_at")
+
+    status    UserStatus   @default(ACTIVE)
+    userRoles UserRole[]
+    sessions  Session[]
+    devices   Device[]
+    profile   UserProfile?
 
     @@index([status, createdAt, updatedAt, deletedAt])
     @@index([email])
