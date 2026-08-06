@@ -50,20 +50,13 @@ export class SessionRepository implements ISessionRepository {
             where: {
                 userId: userId.value,
                 isRevoked: false,
-                expiresAt: null,
+                expiresAt: {
+                    not: null,
+                    gt: new Date(),
+                },
             },
         });
         return prismaSessions.map((prismaSession) => SessionMapper.toDomain(prismaSession));
-    }
-
-    async findByUserIdAndDeviceId(userId: IdentifierVO, deviceId: string): Promise<Session | null> {
-        const prismaSession = await this.prisma.session.findFirst({
-            where: {
-                userId: userId.value,
-                deviceId: deviceId,
-            },
-        });
-        return prismaSession ? SessionMapper.toDomain(prismaSession) : null;
     }
 
     async revokeById(id: IdentifierVO): Promise<void> {
@@ -112,7 +105,7 @@ export class SessionRepository implements ISessionRepository {
         });
     }
 
-    async findById(id: IdentifierVO): Promise<Session> {
+    async findById(id: IdentifierVO): Promise<Session | null> {
         const prismaSession = await this.prisma.session.findUnique({
             where: {
                 id: id.value,
@@ -134,7 +127,7 @@ export class SessionRepository implements ISessionRepository {
         return prismaSessions.map((prismaSession) => SessionMapper.toDomain(prismaSession));
     }
 
-    async findOne(condition?: FilterCondition<Session, keyof Session>): Promise<Session> {
+    async findOne(condition?: FilterCondition<Session, keyof Session>): Promise<Session | null> {
         const prismaWhere = PrismaQueryMapper.toPrismaWhere<Session, keyof Session, Prisma.SessionWhereInput>(
             condition,
         );

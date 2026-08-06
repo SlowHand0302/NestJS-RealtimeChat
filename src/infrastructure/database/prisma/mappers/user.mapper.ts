@@ -1,4 +1,3 @@
-import { User as UserEntity, UserStatusPropEnums } from '@core/entities/user.entity';
 import {
     User as PrismaUser,
     Role as PrismaRole,
@@ -7,11 +6,12 @@ import {
     UserProfile as PrismaUserProfile,
     RolePermission as PrismaRolePermission,
 } from '../generated/client';
+import { RoleMapper } from './role.mapper';
 import { EmailVO } from '@core/value-objects/email.vo';
 import { IdentifierVO } from '@core/value-objects/identifier.vo';
-import { RoleMapper } from './role.mapper';
-import { Gender, UserDetailInfo } from '@core/value-objects/user-detail.vo';
 import { HashedPasswordVO } from '@core/value-objects/hashed-password.vo';
+import { Gender, UserDetailInfo } from '@core/value-objects/user-detail.vo';
+import { User as UserEntity, UserStatusPropEnums } from '@core/entities/user.entity';
 
 type UserWithRelations = PrismaUser & {
     userRoles: (PrismaUserRole & {

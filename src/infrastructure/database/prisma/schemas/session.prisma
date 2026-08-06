@@ -1,9 +1,8 @@
 model Session {
     id               String    @id @default(uuid())
     userId           String    @map("user_id")
-    refreshTokenHash String    @unique @map("refresh_token_hash")
     deviceId         String    @map("device_id")
-    deviceName       String?   @map("device_name")
+    refreshTokenHash String    @unique @map("refresh_token_hash")
     ipAddress        String?   @map("ip_address")
     userAgent        String?   @map("user_agent")
     isRevoked        Boolean   @default(false) @map("is_revoked")
@@ -11,9 +10,14 @@ model Session {
     lastUsedAt       DateTime  @default(now()) @map("last_used_at")
     createdAt        DateTime  @default(now()) @map("created_at")
     updatedAt        DateTime  @updatedAt @map("updated_at")
-    user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@unique([userId, deviceId])
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    device Device @relation(fields: [deviceId], references: [id], onDelete: Restrict)
+
+    // NOTE: No @@unique([userId, deviceId]) here by design.
+    // Session concurrency (single-device / single-user / unlimited) is enforced
+    // in the application layer via SessionConcurrencyPolicy (core/policies),
+    // not as a DB constraint — see that file for the full rationale.
     @@index([userId])
     @@index([deviceId])
     @@index([refreshTokenHash])

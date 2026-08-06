@@ -1,0 +1,17 @@
+model Device {
+    id             String   @id @default(uuid())
+    userId         String   @map("user_id")
+    clientDeviceId String   @map("client_device_id")
+    deviceName     String?  @map("device_name")
+    firstSeenAt    DateTime @default(now()) @map("first_seen_at")
+    lastSeenAt     DateTime @default(now()) @map("last_seen_at")
+    createdAt      DateTime @default(now()) @map("created_at")
+    updatedAt      DateTime @updatedAt @map("updated_at")
+
+    sessions Session[]
+    user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([userId, clientDeviceId])
+    @@index([userId])
+    @@map("devices")
+}
