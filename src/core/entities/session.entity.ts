@@ -1,16 +1,12 @@
 import { AggregateRoot } from './_aggregate-root.interface';
 import { IdentifierVO } from '@core/value-objects/identifier.vo';
-import { DeviceInfoVO } from '@core/value-objects/device-info.vo';
-
-export enum SessionStrategyPropEnum {
-    SINGLE_DEVICE = 'single_device',
-    MULTI_DEVICE = 'multi_device',
-}
+import { ConnectionInfoVO } from '@core/value-objects/connection-info.vo';
 
 interface SessionProps {
     userId: IdentifierVO;
+    deviceId: IdentifierVO;
     refreshTokenHash: string;
-    deviceInfo: DeviceInfoVO;
+    connectionInfo: ConnectionInfoVO;
     isRevoked: boolean;
     expireAt: Date;
     lastUsedAt: Date;
@@ -20,37 +16,32 @@ export class Session extends AggregateRoot<SessionProps> {
     private constructor(
         props: SessionProps,
         id?: IdentifierVO,
-        timestamp?: {
-            createdAt?: Date;
-            updatedAt?: Date;
-            deletedAt?: Date;
-        },
+        timestamp?: { createdAt?: Date; updatedAt?: Date; deletedAt?: Date },
     ) {
         super(props, id, timestamp);
     }
 
-    // Factory method for new session
-    public static create(userId: IdentifierVO, expireAt: Date, deviceInfo: DeviceInfoVO) {
-        const session = new Session({
+    public static create(
+        userId: IdentifierVO,
+        deviceId: IdentifierVO,
+        expireAt: Date,
+        connectionInfo: ConnectionInfoVO,
+    ) {
+        return new Session({
             userId,
+            deviceId,
             refreshTokenHash: '',
             expireAt,
-            deviceInfo,
+            connectionInfo,
             isRevoked: false,
             lastUsedAt: new Date(),
         });
-        return session;
     }
 
-    // Factory method for reconstitution from persistence
     public static reconstitute(
         props: SessionProps,
         id?: IdentifierVO,
-        timestamp?: {
-            createdAt?: Date;
-            updatedAt?: Date;
-            deletedAt?: Date;
-        },
+        timestamp?: { createdAt?: Date; updatedAt?: Date; deletedAt?: Date },
     ): Session {
         return new Session(props, id, timestamp);
     }
@@ -86,10 +77,6 @@ export class Session extends AggregateRoot<SessionProps> {
         this.touch();
     }
 
-    public isSameDevice(other: DeviceInfoVO): boolean {
-        return this.props.deviceInfo.equals(other);
-    }
-
     public assignRefreshTokenHash(refreshTokenHash: string): void {
         if (this.props.refreshTokenHash) {
             throw new Error('Refresh token already assigned');
@@ -101,6 +88,10 @@ export class Session extends AggregateRoot<SessionProps> {
     // Getters
     get userId(): string {
         return this.props.userId.value;
+    }
+
+    get deviceId(): string {
+        return this.props.deviceId.value;
     }
 
     get refreshTokenHash(): string {
@@ -119,7 +110,7 @@ export class Session extends AggregateRoot<SessionProps> {
         return this.props.lastUsedAt;
     }
 
-    get deviceInfo(): DeviceInfoVO {
-        return this.props.deviceInfo;
+    get connectionInfo(): ConnectionInfoVO {
+        return this.props.connectionInfo;
     }
 }

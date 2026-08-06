@@ -10,7 +10,6 @@ export interface ISessionRepository extends Pick<
 > {
     findByRefreshToken(token: string): Promise<Session | null>;
     findActiveSessionsByUserId(userId: IdentifierVO): Promise<Session[]>;
-    findByUserIdAndDeviceId(userId: IdentifierVO, deviceId: string): Promise<Session | null>;
     revokeById(id: IdentifierVO): Promise<void>;
     revokeAllByUserId(userId: IdentifierVO): Promise<void>;
     revokeAllByUserIdExcept(userId: IdentifierVO, sessionId: IdentifierVO): Promise<void>;
