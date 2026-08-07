@@ -59,6 +59,24 @@ export class SessionRepository implements ISessionRepository {
         return prismaSessions.map((prismaSession) => SessionMapper.toDomain(prismaSession));
     }
 
+    async findActiveSessionsByUserIdPaginated(
+        userId: IdentifierVO,
+        options: Pick<FilterOptions<Session, keyof Session>, 'take' | 'skip' | 'orderBy'>,
+    ): Promise<Session[]> {
+        const prismaSessions = await this.prisma.session.findMany({
+            where: {
+                userId: userId.value,
+                isRevoked: false,
+                expiresAt: { gt: new Date() },
+            },
+            ...(options && {
+                take: options.take,
+                skip: options.skip,
+            }),
+        });
+        return prismaSessions.map((prismaSession) => SessionMapper.toDomain(prismaSession));
+    }
+
     async revokeById(id: IdentifierVO): Promise<void> {
         await this.prisma.session.update({
             where: {
