@@ -4,7 +4,7 @@ import { FieldOrder, FilterCondition } from '@core/criteria/criteria';
 export interface FilterOptions<T extends AggregateRoot, K extends keyof T> {
     take: number;
     skip: number;
-    orderBy: FieldOrder<T>;
+    orderBy: FieldOrder<T, K>;
     filter: FilterCondition<T, K>;
     search?: Partial<Record<K, string>>;
 }

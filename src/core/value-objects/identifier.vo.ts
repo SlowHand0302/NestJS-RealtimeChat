@@ -1,10 +1,11 @@
 import { BaseValueObject } from './_base.vo';
+import { PrimitiveValueObject } from './_primitive-value-object.interface';
 
 interface IdentifierProps {
     readonly value: string;
 }
 
-export class IdentifierVO extends BaseValueObject<IdentifierProps> {
+export class IdentifierVO extends BaseValueObject<IdentifierProps> implements PrimitiveValueObject<string> {
     private constructor(props: IdentifierProps) {
         super(props);
     }
@@ -51,6 +52,20 @@ export class IdentifierVO extends BaseValueObject<IdentifierProps> {
         }
 
         return uuidV4Regex.test(uuid);
+    }
+
+    /**
+     * Required by PrimitiveValueObject — lets PrismaQueryMapper extract the
+     * raw UUID automatically when this VO is used as a filter value.
+     * Intentionally just aliases `value`; kept separate so the "primitive
+     * extraction contract" doesn't get silently coupled to this VO's own
+     * domain-facing getter name (other VOs implementing this interface won't
+     * all be named `value` — e.g. a future single-field VO might expose
+     * `.code` or `.slug` as its domain getter, but still needs `.primitiveValue`
+     * for this contract specifically).
+     */
+    public get primitiveValue(): string {
+        return this.props.value;
     }
 
     public get value(): string {
