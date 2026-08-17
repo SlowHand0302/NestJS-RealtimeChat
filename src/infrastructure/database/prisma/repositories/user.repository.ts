@@ -60,11 +60,16 @@ export class UserRepository implements IUserRepository {
 
     async findAll(options?: FilterOptions<User, keyof User>): Promise<User[]> {
         const prismaWhere = PrismaQueryMapper.toPrismaWhere<User, keyof User, Prisma.UserWhereInput>(options.filter);
+
+        const prismaOrderBy = options.orderBy
+            ? PrismaQueryMapper.toPrismaOrderBy<User, keyof User, Prisma.UserOrderByWithRelationInput>(options.orderBy)
+            : undefined;
+
         const prismaUsers = await this.prisma.user.findMany({
             where: prismaWhere,
             take: options.take,
             skip: options.skip,
-            // orderBy: options.orderBy,
+            orderBy: prismaOrderBy,
             include: userWithRelations,
         });
         return prismaUsers.length > 0 ? prismaUsers.map((prismaUser) => UserMapper.toDomain(prismaUser)) : [];

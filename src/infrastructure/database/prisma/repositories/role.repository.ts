@@ -88,11 +88,16 @@ export class RoleRepository implements IRoleRepository {
 
     async findAll(options?: FilterOptions<Role, keyof Role>): Promise<Role[]> {
         const prismaWhere = PrismaQueryMapper.toPrismaWhere<Role, keyof Role, Prisma.RoleWhereInput>(options.filter);
+
+        const prismaOrderBy = options.orderBy
+            ? PrismaQueryMapper.toPrismaOrderBy<Role, keyof Role, Prisma.RoleOrderByWithRelationInput>(options.orderBy)
+            : undefined;
+
         const prismaRoles = await this.prisma.role.findMany({
             where: prismaWhere,
             take: options.take,
             skip: options.skip,
-            // orderBy: options.orderBy,
+            orderBy: prismaOrderBy,
             include: roleWithRelations,
         });
         return prismaRoles.length > 0 ? prismaRoles.map((prismaRole) => RoleMapper.toDomain(prismaRole)) : [];

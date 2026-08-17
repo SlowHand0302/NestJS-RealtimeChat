@@ -53,11 +53,20 @@ export class DeviceRepository implements IDeviceRepository {
         const prismaWhere = PrismaQueryMapper.toPrismaWhere<Device, keyof Device, Prisma.DeviceWhereInput>(
             options.filter,
         );
+
+        const prismaOrderBy = options.orderBy
+            ? PrismaQueryMapper.toPrismaOrderBy<Device, keyof Device, Prisma.DeviceOrderByWithRelationInput>(
+                  options.orderBy,
+              )
+            : undefined;
+
         const prismaDevices = await this.prisma.device.findMany({
             where: prismaWhere,
             take: options.take,
             skip: options.skip,
+            orderBy: prismaOrderBy,
         });
+
         return prismaDevices.map((prismaDevice) => DeviceMapper.toDomain(prismaDevice));
     }
 

@@ -136,11 +136,18 @@ export class SessionRepository implements ISessionRepository {
         const prismaWhere = PrismaQueryMapper.toPrismaWhere<Session, keyof Session, Prisma.SessionWhereInput>(
             options.filter,
         );
+
+        const prismaOrderBy = options.orderBy
+            ? PrismaQueryMapper.toPrismaOrderBy<Session, keyof Session, Prisma.SessionOrderByWithRelationInput>(
+                  options.orderBy,
+              )
+            : undefined;
+
         const prismaSessions = await this.prisma.session.findMany({
             where: prismaWhere,
             take: options.take,
             skip: options.skip,
-            // orderBy: options.orderBy
+            orderBy: prismaOrderBy,
         });
         return prismaSessions.map((prismaSession) => SessionMapper.toDomain(prismaSession));
     }

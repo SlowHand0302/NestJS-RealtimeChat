@@ -46,12 +46,22 @@ export class PermissionRepository implements IPermissionRepository {
         const prismaWhere = PrismaQueryMapper.toPrismaWhere<Permission, keyof Permission, Prisma.PermissionWhereInput>(
             options.filter,
         );
+
+        const prismaOrderBy = options.orderBy
+            ? PrismaQueryMapper.toPrismaOrderBy<
+                  Permission,
+                  keyof Permission,
+                  Prisma.PermissionOrderByWithRelationInput
+              >(options.orderBy)
+            : undefined;
+
         const prismaPermissions = await this.prisma.permission.findMany({
             where: prismaWhere,
             take: options.take,
             skip: options.skip,
-            // orderBy: options.orderBy,
+            orderBy: prismaOrderBy,
         });
+
         return prismaPermissions.length > 0
             ? prismaPermissions.map((permission) => PermissionMapper.toDomain(permission))
             : [];
