@@ -1,6 +1,6 @@
 import { FilterOperator } from '@core/criteria/filter-operator';
-import { FilterCondition, FieldFilter } from '@core/criteria/criteria';
 import { AggregateRoot } from '@core/entities/_aggregate-root.interface';
+import { FilterCondition, FieldFilter, FieldOrder } from '@core/criteria/criteria';
 import { PrimitiveValueObject } from '@core/value-objects/_primitive-value-object.interface';
 
 export class PrismaQueryMapper {
@@ -17,6 +17,7 @@ export class PrismaQueryMapper {
         lt: 'lt',
         lte: 'lte',
     };
+    private static readonly TEXT_SEARCH_OPERATORS = new Set<FilterOperator>(['contains', 'startsWith', 'endsWith']);
 
     static toPrismaWhere<T extends AggregateRoot, K extends keyof T, R>(condition: FilterCondition<T, K>): R {
         // 1. Handle Logical Filters (AND/OR/NOT)
@@ -31,19 +32,40 @@ export class PrismaQueryMapper {
         }
 
         // 2. Handle Field Filters
-        // This part maps: { email: { operator: 'contains', value: '@gmail.com' } }
-        // To: { email: { contains: '@gmail.com', mode: 'insensitive' } }
-        const fieldName = Object.keys(condition)[0] as string;
-        const fieldFilter = condition[fieldName] as FieldFilter<T[K]>;
-        const rawValue = this.unwrapValue(fieldFilter.value);
+        // Every key in `condition` is processed — not just the first — and
+        // combined as an implicit AND, matching Prisma's own default behavior
+        // when multiple fields appear in one `where` object. e.g.:
+        // { id: {...}, userId: {...} } -> { id: {...}, userId: {...} } (both applied)
+        const result: Record<string, unknown> = {};
 
-        return {
-            [fieldName]: {
-                [this.operatorMap[fieldFilter.operator]]: rawValue,
-                // PostgreSQL specific: enable case-insensitive search for strings
-                ...(typeof rawValue === 'string' ? { mode: 'insensitive' } : {}),
-            },
-        } as unknown as R;
+        for (const [fieldName, fieldFilter] of Object.entries(condition)) {
+            const filter = fieldFilter as FieldFilter<T[K]>;
+            const rawValue = this.unwrapValue(filter.value);
+            const isCaseInsensitive =
+                this.TEXT_SEARCH_OPERATORS.has(filter.operator) ||
+                (filter.operator === 'equals' && 'caseSensitive' in filter && filter.caseSensitive === false);
+
+            result[fieldName] = {
+                [this.operatorMap[filter.operator]]: rawValue,
+                // Case-insensitive matching only makes sense for text-pattern
+                // operators. Applying it to 'equals'/'in'/etc. would silently
+                // case-fold values where case is meaningful (UUIDs, hashes,
+                // exact-match identifiers) — including VO-wrapped ids unwrapped
+                // by unwrapValue() above, which are strings by the time they
+                // reach this check but were never meant to be searched as text.
+                ...(isCaseInsensitive && typeof rawValue === 'string' ? { mode: 'insensitive' } : {}),
+            };
+        }
+
+        return result as unknown as R;
+    }
+
+    /**
+     * Translates a single-field FieldOrder into Prisma's orderBy shape.
+     * e.g. { field: 'lastUsedAt', direction: 'desc' } -> { lastUsedAt: 'desc' }
+     */
+    static toPrismaOrderBy<T extends AggregateRoot, K extends keyof T, R>(order: FieldOrder<T, K>): R {
+        return { [order.field]: order.direction } as unknown as R;
     }
 
     /**
