@@ -39,18 +39,9 @@ export class DeviceManagerService {
         clientDeviceId: string,
         deviceName?: string | null,
     ): Promise<{ device: Device; isNew: boolean }> {
-        const existing = await this.deviceRepository.findByUserIdAndClientDeviceId(userId, clientDeviceId);
-
-        if (existing) {
-            existing.recordSighting();
-            await this.deviceRepository.update(existing.id, existing);
-            return { device: existing, isNew: false };
-        }
-
         const identity = DeviceIdentityVO.create({ clientDeviceId, deviceName });
-        const device = Device.create(userId, identity);
-        await this.deviceRepository.create(device);
+        const candidate = Device.create(userId, identity);
 
-        return { device, isNew: true };
+        return this.deviceRepository.upsertByUserIdAndClientDeviceId(candidate);
     }
 }

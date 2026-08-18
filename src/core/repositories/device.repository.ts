@@ -9,4 +9,5 @@ export interface IDeviceRepository extends Pick<
     'findAll' | 'findById' | 'findOne' | 'count' | 'exists' | 'update' | 'create'
 > {
     findByUserIdAndClientDeviceId(userId: IdentifierVO, clientDeviceId: string): Promise<Device | null>;
+    upsertByUserIdAndClientDeviceId(candidate: Device): Promise<{ device: Device; isNew: boolean }>;
 }

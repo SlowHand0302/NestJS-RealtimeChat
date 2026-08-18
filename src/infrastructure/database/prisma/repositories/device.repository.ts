@@ -30,6 +30,28 @@ export class DeviceRepository implements IDeviceRepository {
         });
     }
 
+    async upsertByUserIdAndClientDeviceId(candidate: Device): Promise<{ device: Device; isNew: boolean }> {
+        const data = DeviceMapper.toPersistence(candidate);
+
+        const prismaDevice = await this.prisma.device.upsert({
+            where: {
+                userId_clientDeviceId: {
+                    userId: candidate.userId,
+                    clientDeviceId: candidate.clientDeviceId,
+                },
+            },
+            create: data,
+            update: {
+                lastSeenAt: new Date(),
+            },
+        });
+
+        const device = DeviceMapper.toDomain(prismaDevice);
+        const isNew = prismaDevice.id === candidate.id.value;
+
+        return { device, isNew };
+    }
+
     async findByUserIdAndClientDeviceId(userId: IdentifierVO, clientDeviceId: string): Promise<Device | null> {
         const prismaDevice = await this.prisma.device.findFirst({
             where: {
