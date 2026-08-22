@@ -11,6 +11,7 @@
  * Current binding: UnlimitedSessionsPolicy (no-op — all concurrent sessions allowed).
  */
 
+// TODO: SingleSessionPerUserPolicy / SingleSessionPerDevicePolicy when needed
 export const SESSION_CONCURRENCY_POLICY = Symbol('SessionConcurrencyPolicy');
 
 export interface SessionSummary {

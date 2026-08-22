@@ -13,7 +13,7 @@ import { ITokenService, TOKEN_SERVICE } from '@core/interfaces/token-service.int
 import { IPasswordHasher, PASSWORD_HASHER } from '@core/interfaces/password-hasher.interface';
 
 @Injectable()
-export class SignInUseCase extends BaseUseCase<SignInDto, SignInResponseDto> {
+export default class SignInUseCase extends BaseUseCase<SignInDto, SignInResponseDto> {
     constructor(
         @Inject(TOKEN_SERVICE)
         private readonly tokenService: ITokenService,

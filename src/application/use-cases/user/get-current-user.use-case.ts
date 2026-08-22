@@ -7,7 +7,7 @@ import { GetCurrentUserDto } from '@application/dtos/user/get-current-user.dto';
 import { GetCurrentUserUseCaseResponseDto } from '@application/dtos/user/get-current-user.response';
 
 @Injectable()
-export class GetCurrentUserUseCase extends BaseUseCase<GetCurrentUserDto, GetCurrentUserUseCaseResponseDto> {
+export default class GetCurrentUserUseCase extends BaseUseCase<GetCurrentUserDto, GetCurrentUserUseCaseResponseDto> {
     constructor(
         @Inject(USER_REPOSITORY)
         private readonly userRepository: IUserRepository,

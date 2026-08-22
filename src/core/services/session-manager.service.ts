@@ -28,6 +28,7 @@ export class SessionManagerService {
         private readonly policyResolver: SessionConcurrencyPolicyResolver,
     ) {}
 
+    // TODO: Race Condition happen when implementing SingleSessionPerUserPolicy in the future
     async createSession(
         user: User,
         deviceId: IdentifierVO,

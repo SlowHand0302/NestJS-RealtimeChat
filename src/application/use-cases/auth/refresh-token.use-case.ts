@@ -11,7 +11,7 @@ import { ISessionRepository, SESSION_REPOSITORY } from '@core/repositories/sessi
 import { IRefreshTokenHasher, REFRESH_TOKEN_HASHER } from '@core/interfaces/refresh-token-hasher.interface';
 
 @Injectable()
-export class RefreshTokenUseCase extends BaseUseCase<RefreshTokenDto, RefreshTokenResponseDto> {
+export default class RefreshTokenUseCase extends BaseUseCase<RefreshTokenDto, RefreshTokenResponseDto> {
     constructor(
         @Inject(TOKEN_SERVICE)
         private readonly tokenService: ITokenService,

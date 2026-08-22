@@ -5,7 +5,7 @@ import { SessionManagerService } from '@core/services/session-manager.service';
 import { SignOutAllSessionDto } from '@application/dtos/auth/sign-out-all-session.dto';
 
 @Injectable()
-export class SignOutAllUseCase extends BaseUseCase<SignOutAllSessionDto, void> {
+export default class SignOutAllUseCase extends BaseUseCase<SignOutAllSessionDto, void> {
     constructor(private readonly sessionManager: SessionManagerService) {
         super();
     }

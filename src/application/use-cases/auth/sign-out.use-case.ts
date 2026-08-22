@@ -16,7 +16,7 @@ export class SignOutUseCase extends BaseUseCase<SignOutDto, void> {
     async execute(input: SignOutDto): Promise<void> {
         const sessionId = IdentifierVO.reconstitute(input.sessionId);
         const session = await this.sessionRepository.findById(sessionId);
-        if (!sessionId) {
+        if (!session) {
             throw new UnauthorizedException('Session Not Found');
         }
         session.revoke();

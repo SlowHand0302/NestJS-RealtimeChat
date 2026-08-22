@@ -12,7 +12,7 @@ const DEFAULT_TAKE = 20;
 const DEFAULT_SKIP = 0;
 
 @Injectable()
-export class GetActiveSessionUseCase extends BaseUseCase<GetActiveSessionDto, GetActiveSessionResponseDto[]> {
+export default class GetActiveSessionUseCase extends BaseUseCase<GetActiveSessionDto, GetActiveSessionResponseDto[]> {
     constructor(
         @Inject(SESSION_REPOSITORY)
         private readonly sessionRepository: ISessionRepository,
