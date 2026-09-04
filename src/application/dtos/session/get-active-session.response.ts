@@ -10,3 +10,8 @@ export interface GetActiveSessionResponseDto extends UseCaseOutput {
     lastUsedAt: Date;
     createdAt: Date;
 }
+
+export interface GetActiveSessionPaginatedResponseDto extends UseCaseOutput {
+    items: GetActiveSessionResponseDto[];
+    total: number;
+}
