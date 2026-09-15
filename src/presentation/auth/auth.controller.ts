@@ -23,7 +23,7 @@ import { parseDurationToMs } from '@infrastructure/utils/duration.util';
 import SignInUseCase from '@application/use-cases/auth/sign-in.use-case';
 import SignUpUseCase from '@application/use-cases/auth/sign-up.use-case';
 import { RefreshTokenResponseDto } from './dtos/refresh-token-response.dto';
-import { SignOutUseCase } from '@application/use-cases/auth/sign-out.use-case';
+import SignOutUseCase from '@application/use-cases/auth/sign-out.use-case';
 import { CurrentUser } from '@infrastructure/decorators/current-user.decorator';
 import RefreshTokenUseCase from '@application/use-cases/auth/refresh-token.use-case';
 import { JwtRefreshTokenGuard } from '@infrastructure/guards/jwt-refresh-token.guard';
