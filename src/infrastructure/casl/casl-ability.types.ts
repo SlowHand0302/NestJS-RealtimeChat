@@ -1,6 +1,7 @@
 import {
     User as PrismaUser,
     Role as PrismaRole,
+    Session as PrismaSession,
     Permission as PrismaPermission,
 } from '@infrastructure/database/prisma/generated/client';
 import { PrismaQuery, Subjects } from '@casl/prisma';
@@ -12,6 +13,7 @@ export type AppSubjects =
     | Subjects<{
           UserSubject: PrismaUser;
           RoleSubject: PrismaRole;
+          SessionSubject: PrismaSession;
           PermissionSubject: PrismaPermission;
       }>;
 
