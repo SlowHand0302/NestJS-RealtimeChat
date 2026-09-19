@@ -62,17 +62,17 @@ export class RoleRepository implements IRoleRepository {
         });
     }
 
-    async syncUserRoles(userId: string, roleIds: string[]): Promise<void> {
+    async syncUserRoles(userId: IdentifierVO, roleIds: IdentifierVO[]): Promise<void> {
         await this.prisma.$transaction([
             // 1. Remove all current roles for this user
             this.prisma.userRole.deleteMany({
-                where: { userId: userId },
+                where: { userId: userId.toString() },
             }),
             // 2. Add the new set of roles
             this.prisma.userRole.createMany({
                 data: roleIds.map((id) => ({
-                    userId: userId,
-                    roleId: id,
+                    userId: userId.toString(),
+                    roleId: id.toString(),
                 })),
             }),
         ]);

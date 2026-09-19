@@ -1,4 +1,3 @@
-// implement mapper for permission, role and user entity
 import { IdentifierVO } from '@core/value-objects/identifier.vo';
 import { Permission as PrismaPermission } from '../generated/client';
 import { PermissionActionPropEnum, Permission as PermissionEntity } from '@core/entities/permission.entity';
