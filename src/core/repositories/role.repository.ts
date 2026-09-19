@@ -10,4 +10,7 @@ export interface IRoleRepository extends IBaseRepository<Role> {
     assignRoleToUser(userId: IdentifierVO, roleId: IdentifierVO): Promise<void>;
     removeRoleFromUser(userId: IdentifierVO, roleId: IdentifierVO): Promise<void>;
     syncUserRoles(userId: IdentifierVO, roleIds: IdentifierVO[]): Promise<void>;
+    assignPermissionToRole(roleId: IdentifierVO, permissionId: IdentifierVO): Promise<void>;
+    removePermissionFromRole(roleId: IdentifierVO, permissionId: IdentifierVO): Promise<void>;
+    syncRolePermissions(roleId: IdentifierVO, permissionIds: IdentifierVO[]): Promise<void>;
 }

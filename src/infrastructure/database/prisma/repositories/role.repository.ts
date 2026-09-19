@@ -66,13 +66,13 @@ export class RoleRepository implements IRoleRepository {
         await this.prisma.$transaction([
             // 1. Remove all current roles for this user
             this.prisma.userRole.deleteMany({
-                where: { userId: userId.toString() },
+                where: { userId: userId.value },
             }),
             // 2. Add the new set of roles
             this.prisma.userRole.createMany({
                 data: roleIds.map((id) => ({
-                    userId: userId.toString(),
-                    roleId: id.toString(),
+                    userId: userId.value,
+                    roleId: id.value,
                 })),
             }),
         ]);
@@ -225,5 +225,41 @@ export class RoleRepository implements IRoleRepository {
             where: prismaWhere,
         });
         return count > 0;
+    }
+
+    async assignPermissionToRole(roleId: IdentifierVO, permissionId: IdentifierVO): Promise<void> {
+        await this.prisma.rolePermission.create({
+            data: {
+                roleId: roleId.value,
+                permissionId: permissionId.value,
+            },
+        });
+    }
+
+    async removePermissionFromRole(roleId: IdentifierVO, permissionId: IdentifierVO): Promise<void> {
+        await this.prisma.rolePermission.delete({
+            where: {
+                roleId_permissionId: {
+                    roleId: roleId.value,
+                    permissionId: permissionId.value,
+                },
+            },
+        });
+    }
+
+    async syncRolePermissions(roleId: IdentifierVO, permissionIds: IdentifierVO[]): Promise<void> {
+        await this.prisma.$transaction([
+            this.prisma.rolePermission.deleteMany({
+                where: {
+                    roleId: roleId.value,
+                },
+            }),
+            this.prisma.rolePermission.createMany({
+                data: permissionIds.map((id) => ({
+                    roleId: roleId.value,
+                    permissionId: id.value,
+                })),
+            }),
+        ]);
     }
 }

@@ -66,6 +66,18 @@ export class Role extends AggregateRoot<RoleProps> {
         this.touch();
     }
 
+    public rename(name: string): void {
+        const normalized = (name ?? '').trim();
+        if (!normalized) throw new Error('Name is required');
+        this.props.name = normalized;
+        this.touch();
+    }
+
+    public updateDescription(description: string): void {
+        this.props.description = description;
+        this.touch();
+    }
+
     // Getters
     public get name(): string {
         return this.props.name;
