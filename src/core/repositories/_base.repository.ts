@@ -6,7 +6,6 @@ export interface FilterOptions<T extends AggregateRoot, K extends keyof T> {
     skip: number;
     orderBy: FieldOrder<T, K>;
     filter: FilterCondition<T, K>;
-    search?: Partial<Record<K, string>>;
 }
 export interface IBaseRepository<T extends AggregateRoot> {
     findById(id: IdentifierVO): Promise<T | null>;

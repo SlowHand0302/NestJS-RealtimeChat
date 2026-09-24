@@ -1,4 +1,4 @@
-import { BaseEntity } from './_base.entity';
+import { AggregateRoot } from './_aggregate-root.interface';
 import { IdentifierVO } from '@core/value-objects/identifier.vo';
 
 export enum PermissionActionPropEnum {
@@ -18,7 +18,7 @@ export interface PermissionProps {
     inverted?: boolean; // true = cannot() rule — explicit denial
 }
 
-export class Permission extends BaseEntity<PermissionProps> {
+export class Permission extends AggregateRoot<PermissionProps> {
     private constructor(
         props: PermissionProps,
         id?: IdentifierVO,
@@ -109,6 +109,22 @@ export class Permission extends BaseEntity<PermissionProps> {
         this.touch();
     }
 
+    public updateAction(action: PermissionActionPropEnum | string): void {
+        this.props.action = Permission.parseAction(action);
+        this.touch();
+    }
+
+    public updateSubject(subject: string): void {
+        const normalized = (subject ?? '').trim();
+        if (!normalized) throw new Error('Subject is required');
+        this.props.subject = normalized;
+        this.touch();
+    }
+
+    public updateInverted(inverted: boolean): void {
+        this.props.inverted = inverted;
+        this.touch();
+    }
     // --- Getters ---
 
     public get action(): PermissionActionPropEnum {
