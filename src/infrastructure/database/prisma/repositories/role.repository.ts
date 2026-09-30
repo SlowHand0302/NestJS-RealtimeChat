@@ -3,7 +3,7 @@ import { Prisma } from '../generated/client';
 import { Role } from '@core/entities/role.entity';
 import { RoleMapper } from '../mappers/role.mapper';
 import { PrismaService } from '../service/prisma.service';
-import { FilterCondition } from '@core/criteria/criteria';
+import { FilterCondition, PropsOf } from '@core/criteria/criteria';
 import { IdentifierVO } from '@core/value-objects/identifier.vo';
 import { PrismaQueryMapper } from '../mappers/prisma-query.mapper';
 import { FilterOptions } from '@core/repositories/_base.repository';
@@ -86,11 +86,15 @@ export class RoleRepository implements IRoleRepository {
         return prismaRole ? RoleMapper.toDomain(prismaRole) : null;
     }
 
-    async findAll(options?: FilterOptions<Role, keyof Role>): Promise<Role[]> {
-        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Role, keyof Role, Prisma.RoleWhereInput>(options.filter);
+    async findAll(options?: FilterOptions<Role, keyof PropsOf<Role>>): Promise<Role[]> {
+        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Role, keyof PropsOf<Role>, Prisma.RoleWhereInput>(
+            options.filter,
+        );
 
         const prismaOrderBy = options.orderBy
-            ? PrismaQueryMapper.toPrismaOrderBy<Role, keyof Role, Prisma.RoleOrderByWithRelationInput>(options.orderBy)
+            ? PrismaQueryMapper.toPrismaOrderBy<Role, keyof PropsOf<Role>, Prisma.RoleOrderByWithRelationInput>(
+                  options.orderBy,
+              )
             : undefined;
 
         const prismaRoles = await this.prisma.role.findMany({
@@ -103,8 +107,8 @@ export class RoleRepository implements IRoleRepository {
         return prismaRoles.length > 0 ? prismaRoles.map((prismaRole) => RoleMapper.toDomain(prismaRole)) : [];
     }
 
-    async findOne(options?: FilterCondition<Role, keyof Role>): Promise<Role | null> {
-        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Role, keyof Role, Prisma.RoleWhereInput>(options);
+    async findOne(options?: FilterCondition<Role, keyof PropsOf<Role>>): Promise<Role | null> {
+        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Role, keyof PropsOf<Role>, Prisma.RoleWhereInput>(options);
         const prismaRole = await this.prisma.role.findFirst({
             where: prismaWhere,
             include: roleWithRelations,
@@ -211,16 +215,16 @@ export class RoleRepository implements IRoleRepository {
         });
     }
 
-    async count(where?: FilterCondition<Role, keyof Role>): Promise<number> {
-        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Role, keyof Role, Prisma.RoleWhereInput>(where);
+    async count(where?: FilterCondition<Role, keyof PropsOf<Role>>): Promise<number> {
+        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Role, keyof PropsOf<Role>, Prisma.RoleWhereInput>(where);
         const count = await this.prisma.role.count({
             where: prismaWhere,
         });
         return count;
     }
 
-    async exists(where: FilterCondition<Role, keyof Role>): Promise<boolean> {
-        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Role, keyof Role, Prisma.RoleWhereInput>(where);
+    async exists(where: FilterCondition<Role, keyof PropsOf<Role>>): Promise<boolean> {
+        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Role, keyof PropsOf<Role>, Prisma.RoleWhereInput>(where);
         const count = await this.prisma.role.count({
             where: prismaWhere,
         });

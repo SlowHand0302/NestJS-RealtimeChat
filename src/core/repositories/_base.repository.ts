@@ -1,7 +1,7 @@
 import { IdentifierVO } from '@core/value-objects/identifier.vo';
 import { AggregateRoot } from '@core/entities/_aggregate-root.interface';
-import { FieldOrder, FilterCondition } from '@core/criteria/criteria';
-export interface FilterOptions<T extends AggregateRoot, K extends keyof T> {
+import { FieldOrder, FilterCondition, PropsOf } from '@core/criteria/criteria';
+export interface FilterOptions<T extends AggregateRoot, K extends keyof PropsOf<T>> {
     take: number;
     skip: number;
     orderBy: FieldOrder<T, K>;
@@ -9,8 +9,8 @@ export interface FilterOptions<T extends AggregateRoot, K extends keyof T> {
 }
 export interface IBaseRepository<T extends AggregateRoot> {
     findById(id: IdentifierVO): Promise<T | null>;
-    findAll(options?: FilterOptions<T, keyof T>): Promise<T[]>;
-    findOne(condition?: FilterCondition<T, keyof T>): Promise<T | null>;
+    findAll(options?: FilterOptions<T, keyof PropsOf<T>>): Promise<T[]>;
+    findOne(condition?: FilterCondition<T, keyof PropsOf<T>>): Promise<T | null>;
     save(entity: T): Promise<void>;
     create(entity: T): Promise<void>;
     createMany(entities: T[]): Promise<void>;
@@ -22,6 +22,6 @@ export interface IBaseRepository<T extends AggregateRoot> {
     restoreMany(entities: T[]): Promise<void>;
     delete(id: IdentifierVO): Promise<void>;
     deleteMany(ids: IdentifierVO[]): Promise<void>;
-    count(condition?: FilterCondition<T, keyof T>): Promise<number>;
-    exists(condition: FilterCondition<T, keyof T>): Promise<boolean>;
+    count(condition?: FilterCondition<T, keyof PropsOf<T>>): Promise<number>;
+    exists(condition: FilterCondition<T, keyof PropsOf<T>>): Promise<boolean>;
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '../generated/client';
 import { Session } from '@core/entities/session.entity';
-import { FilterCondition } from '@core/criteria/criteria';
+import { FilterCondition, PropsOf } from '@core/criteria/criteria';
 import { PrismaService } from '../service/prisma.service';
 import { SessionMapper } from '../mappers/session.mapper';
 import { IdentifierVO } from '@core/value-objects/identifier.vo';
@@ -61,7 +61,7 @@ export class SessionRepository implements ISessionRepository {
 
     async findActiveSessionsByUserIdPaginated(
         userId: IdentifierVO,
-        options: Pick<FilterOptions<Session, keyof Session>, 'take' | 'skip' | 'orderBy'>,
+        options: Pick<FilterOptions<Session, keyof PropsOf<Session>>, 'take' | 'skip' | 'orderBy'>,
     ): Promise<Session[]> {
         const prismaSessions = await this.prisma.session.findMany({
             where: {
@@ -132,15 +132,17 @@ export class SessionRepository implements ISessionRepository {
         return prismaSession ? SessionMapper.toDomain(prismaSession) : null;
     }
 
-    async findAll(options?: FilterOptions<Session, keyof Session>): Promise<Session[]> {
-        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Session, keyof Session, Prisma.SessionWhereInput>(
+    async findAll(options?: FilterOptions<Session, keyof PropsOf<Session>>): Promise<Session[]> {
+        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Session, keyof PropsOf<Session>, Prisma.SessionWhereInput>(
             options.filter,
         );
 
         const prismaOrderBy = options.orderBy
-            ? PrismaQueryMapper.toPrismaOrderBy<Session, keyof Session, Prisma.SessionOrderByWithRelationInput>(
-                  options.orderBy,
-              )
+            ? PrismaQueryMapper.toPrismaOrderBy<
+                  Session,
+                  keyof PropsOf<Session>,
+                  Prisma.SessionOrderByWithRelationInput
+              >(options.orderBy)
             : undefined;
 
         const prismaSessions = await this.prisma.session.findMany({
@@ -152,8 +154,8 @@ export class SessionRepository implements ISessionRepository {
         return prismaSessions.map((prismaSession) => SessionMapper.toDomain(prismaSession));
     }
 
-    async findOne(condition?: FilterCondition<Session, keyof Session>): Promise<Session | null> {
-        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Session, keyof Session, Prisma.SessionWhereInput>(
+    async findOne(condition?: FilterCondition<Session, keyof PropsOf<Session>>): Promise<Session | null> {
+        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Session, keyof PropsOf<Session>, Prisma.SessionWhereInput>(
             condition,
         );
         const prismaSession = await this.prisma.session.findFirst({
@@ -162,8 +164,8 @@ export class SessionRepository implements ISessionRepository {
         return prismaSession ? SessionMapper.toDomain(prismaSession) : null;
     }
 
-    async count(condition?: FilterCondition<Session, keyof Session>): Promise<number> {
-        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Session, keyof Session, Prisma.SessionWhereInput>(
+    async count(condition?: FilterCondition<Session, keyof PropsOf<Session>>): Promise<number> {
+        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Session, keyof PropsOf<Session>, Prisma.SessionWhereInput>(
             condition,
         );
         const count = await this.prisma.session.count({
@@ -172,8 +174,8 @@ export class SessionRepository implements ISessionRepository {
         return count;
     }
 
-    async exists(condition: FilterCondition<Session, keyof Session>): Promise<boolean> {
-        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Session, keyof Session, Prisma.SessionWhereInput>(
+    async exists(condition: FilterCondition<Session, keyof PropsOf<Session>>): Promise<boolean> {
+        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Session, keyof PropsOf<Session>, Prisma.SessionWhereInput>(
             condition,
         );
         const count = await this.prisma.session.count({

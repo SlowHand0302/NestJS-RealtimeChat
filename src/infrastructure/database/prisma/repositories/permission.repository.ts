@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '../generated/client';
-import { FilterCondition } from '@core/criteria/criteria';
+import { FilterCondition, PropsOf } from '@core/criteria/criteria';
 import { PrismaService } from '../service/prisma.service';
 import { PermissionMapper } from '../mappers/permission.mapper';
 import { IdentifierVO } from '@core/value-objects/identifier.vo';
@@ -13,7 +13,7 @@ export const permissionWithRelations = {
     rolePermissions: true,
 } as const;
 
-export type PermissionWithRelations = Prisma.RoleGetPayload<{
+export type PermissionWithRelations = Prisma.PermissionGetPayload<{
     include: typeof permissionWithRelations;
 }>;
 
@@ -42,15 +42,17 @@ export class PermissionRepository implements IPermissionRepository {
         return prismaPermission ? PermissionMapper.toDomain(prismaPermission) : null;
     }
 
-    async findAll(options?: FilterOptions<Permission, keyof Permission>): Promise<Permission[]> {
-        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Permission, keyof Permission, Prisma.PermissionWhereInput>(
-            options.filter,
-        );
+    async findAll(options?: FilterOptions<Permission, keyof PropsOf<Permission>>): Promise<Permission[]> {
+        const prismaWhere = PrismaQueryMapper.toPrismaWhere<
+            Permission,
+            keyof PropsOf<Permission>,
+            Prisma.PermissionWhereInput
+        >(options.filter);
 
         const prismaOrderBy = options.orderBy
             ? PrismaQueryMapper.toPrismaOrderBy<
                   Permission,
-                  keyof Permission,
+                  keyof PropsOf<Permission>,
                   Prisma.PermissionOrderByWithRelationInput
               >(options.orderBy)
             : undefined;
@@ -67,10 +69,12 @@ export class PermissionRepository implements IPermissionRepository {
             : [];
     }
 
-    async findOne(where?: FilterCondition<Permission, keyof Permission>): Promise<Permission | null> {
-        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Permission, keyof Permission, Prisma.PermissionWhereInput>(
-            where,
-        );
+    async findOne(where?: FilterCondition<Permission, keyof PropsOf<Permission>>): Promise<Permission | null> {
+        const prismaWhere = PrismaQueryMapper.toPrismaWhere<
+            Permission,
+            keyof PropsOf<Permission>,
+            Prisma.PermissionWhereInput
+        >(where);
         const prismaPermission = await this.prisma.permission.findFirst({
             where: prismaWhere,
         });
@@ -208,20 +212,24 @@ export class PermissionRepository implements IPermissionRepository {
         });
     }
 
-    async count(where?: FilterCondition<Permission, keyof Permission>): Promise<number> {
-        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Permission, keyof Permission, Prisma.PermissionWhereInput>(
-            where,
-        );
+    async count(where?: FilterCondition<Permission, keyof PropsOf<Permission>>): Promise<number> {
+        const prismaWhere = PrismaQueryMapper.toPrismaWhere<
+            Permission,
+            keyof PropsOf<Permission>,
+            Prisma.PermissionWhereInput
+        >(where);
         const count = await this.prisma.permission.count({
             where: prismaWhere,
         });
         return count;
     }
 
-    async exists(where: FilterCondition<Permission, keyof Permission>): Promise<boolean> {
-        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Permission, keyof Permission, Prisma.PermissionWhereInput>(
-            where,
-        );
+    async exists(where: FilterCondition<Permission, keyof PropsOf<Permission>>): Promise<boolean> {
+        const prismaWhere = PrismaQueryMapper.toPrismaWhere<
+            Permission,
+            keyof PropsOf<Permission>,
+            Prisma.PermissionWhereInput
+        >(where);
         const count = await this.prisma.permission.count({
             where: prismaWhere,
         });

@@ -33,7 +33,7 @@ export default class GetActiveSessionUseCase extends BaseUseCase<
         const now = new Date();
 
         const activeCondition = {
-            userId: { operator: 'equals' as const, value: userId.value },
+            userId: { operator: 'equals' as const, value: userId }, // was: value: userId.value
             isRevoked: { operator: 'equals' as const, value: false },
             expiresAt: { operator: 'gt' as const, value: now },
         };

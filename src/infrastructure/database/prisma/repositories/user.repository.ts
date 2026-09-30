@@ -4,7 +4,7 @@ import { User } from '@core/entities/user.entity';
 import { UserMapper } from '../mappers/user.mapper';
 import { EmailVO } from '@core/value-objects/email.vo';
 import { PrismaService } from '../service/prisma.service';
-import { FilterCondition } from '@core/criteria/criteria';
+import { FilterCondition, PropsOf } from '@core/criteria/criteria';
 import { IdentifierVO } from '@core/value-objects/identifier.vo';
 import { PrismaQueryMapper } from '../mappers/prisma-query.mapper';
 import { FilterOptions } from '@core/repositories/_base.repository';
@@ -58,11 +58,15 @@ export class UserRepository implements IUserRepository {
         return prismaUser ? UserMapper.toDomain(prismaUser) : null;
     }
 
-    async findAll(options?: FilterOptions<User, keyof User>): Promise<User[]> {
-        const prismaWhere = PrismaQueryMapper.toPrismaWhere<User, keyof User, Prisma.UserWhereInput>(options.filter);
+    async findAll(options?: FilterOptions<User, keyof PropsOf<User>>): Promise<User[]> {
+        const prismaWhere = PrismaQueryMapper.toPrismaWhere<User, keyof PropsOf<User>, Prisma.UserWhereInput>(
+            options.filter,
+        );
 
         const prismaOrderBy = options.orderBy
-            ? PrismaQueryMapper.toPrismaOrderBy<User, keyof User, Prisma.UserOrderByWithRelationInput>(options.orderBy)
+            ? PrismaQueryMapper.toPrismaOrderBy<User, keyof PropsOf<User>, Prisma.UserOrderByWithRelationInput>(
+                  options.orderBy,
+              )
             : undefined;
 
         const prismaUsers = await this.prisma.user.findMany({
@@ -75,8 +79,8 @@ export class UserRepository implements IUserRepository {
         return prismaUsers.length > 0 ? prismaUsers.map((prismaUser) => UserMapper.toDomain(prismaUser)) : [];
     }
 
-    async findOne(where?: FilterCondition<User, keyof User>): Promise<User | null> {
-        const prismaWhere = PrismaQueryMapper.toPrismaWhere<User, keyof User, Prisma.UserWhereInput>(where);
+    async findOne(where?: FilterCondition<User, keyof PropsOf<User>>): Promise<User | null> {
+        const prismaWhere = PrismaQueryMapper.toPrismaWhere<User, keyof PropsOf<User>, Prisma.UserWhereInput>(where);
         const prismaUser = await this.prisma.user.findFirst({
             where: prismaWhere,
             include: userWithRelations,
@@ -230,16 +234,16 @@ export class UserRepository implements IUserRepository {
         });
     }
 
-    async count(where?: FilterCondition<User, keyof User>): Promise<number> {
-        const prismaWhere = PrismaQueryMapper.toPrismaWhere<User, keyof User, Prisma.UserWhereInput>(where);
+    async count(where?: FilterCondition<User, keyof PropsOf<User>>): Promise<number> {
+        const prismaWhere = PrismaQueryMapper.toPrismaWhere<User, keyof PropsOf<User>, Prisma.UserWhereInput>(where);
         const count = await this.prisma.user.count({
             where: prismaWhere,
         });
         return count;
     }
 
-    async exists(where: FilterCondition<User, keyof User>): Promise<boolean> {
-        const prismaWhere = PrismaQueryMapper.toPrismaWhere<User, keyof User, Prisma.UserWhereInput>(where);
+    async exists(where: FilterCondition<User, keyof PropsOf<User>>): Promise<boolean> {
+        const prismaWhere = PrismaQueryMapper.toPrismaWhere<User, keyof PropsOf<User>, Prisma.UserWhereInput>(where);
         const count = await this.prisma.user.count({
             where: prismaWhere,
         });

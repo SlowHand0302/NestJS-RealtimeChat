@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '../generated/client';
 import { Device } from '@core/entities/device.entity';
 import { DeviceMapper } from '../mappers/device.mapper';
-import { FilterCondition } from '@core/criteria/criteria';
+import { FilterCondition, PropsOf } from '@core/criteria/criteria';
 import { PrismaService } from '../service/prisma.service';
 import { IdentifierVO } from '@core/value-objects/identifier.vo';
 import { PrismaQueryMapper } from '../mappers/prisma-query.mapper';
@@ -71,13 +71,13 @@ export class DeviceRepository implements IDeviceRepository {
         return prismaDevice ? DeviceMapper.toDomain(prismaDevice) : null;
     }
 
-    async findAll(options?: FilterOptions<Device, keyof Device>): Promise<Device[]> {
-        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Device, keyof Device, Prisma.DeviceWhereInput>(
+    async findAll(options?: FilterOptions<Device, keyof PropsOf<Device>>): Promise<Device[]> {
+        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Device, keyof PropsOf<Device>, Prisma.DeviceWhereInput>(
             options.filter,
         );
 
         const prismaOrderBy = options.orderBy
-            ? PrismaQueryMapper.toPrismaOrderBy<Device, keyof Device, Prisma.DeviceOrderByWithRelationInput>(
+            ? PrismaQueryMapper.toPrismaOrderBy<Device, keyof PropsOf<Device>, Prisma.DeviceOrderByWithRelationInput>(
                   options.orderBy,
               )
             : undefined;
@@ -92,24 +92,30 @@ export class DeviceRepository implements IDeviceRepository {
         return prismaDevices.map((prismaDevice) => DeviceMapper.toDomain(prismaDevice));
     }
 
-    async findOne(condition?: FilterCondition<Device, keyof Device>): Promise<Device | null> {
-        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Device, keyof Device, Prisma.DeviceWhereInput>(condition);
+    async findOne(condition?: FilterCondition<Device, keyof PropsOf<Device>>): Promise<Device | null> {
+        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Device, keyof PropsOf<Device>, Prisma.DeviceWhereInput>(
+            condition,
+        );
         const prismaDevice = await this.prisma.device.findFirst({
             where: prismaWhere,
         });
         return prismaDevice ? DeviceMapper.toDomain(prismaDevice) : null;
     }
 
-    async count(condition?: FilterCondition<Device, keyof Device>): Promise<number> {
-        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Device, keyof Device, Prisma.DeviceWhereInput>(condition);
+    async count(condition?: FilterCondition<Device, keyof PropsOf<Device>>): Promise<number> {
+        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Device, keyof PropsOf<Device>, Prisma.DeviceWhereInput>(
+            condition,
+        );
         const count = await this.prisma.device.count({
             where: prismaWhere,
         });
         return count;
     }
 
-    async exists(condition: FilterCondition<Device, keyof Device>): Promise<boolean> {
-        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Device, keyof Device, Prisma.DeviceWhereInput>(condition);
+    async exists(condition: FilterCondition<Device, keyof PropsOf<Device>>): Promise<boolean> {
+        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Device, keyof PropsOf<Device>, Prisma.DeviceWhereInput>(
+            condition,
+        );
         const count = await this.prisma.device.count({
             where: prismaWhere,
         });

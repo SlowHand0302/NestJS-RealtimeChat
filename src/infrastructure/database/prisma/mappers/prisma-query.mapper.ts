@@ -1,6 +1,6 @@
 import { FilterOperator } from '@core/criteria/filter-operator';
 import { AggregateRoot } from '@core/entities/_aggregate-root.interface';
-import { FilterCondition, FieldFilter, FieldOrder } from '@core/criteria/criteria';
+import { FilterCondition, FieldFilter, FieldOrder, PropsOf } from '@core/criteria/criteria';
 import { PrimitiveValueObject } from '@core/value-objects/_primitive-value-object.interface';
 
 export class PrismaQueryMapper {
@@ -19,7 +19,7 @@ export class PrismaQueryMapper {
     };
     private static readonly TEXT_SEARCH_OPERATORS = new Set<FilterOperator>(['contains', 'startsWith', 'endsWith']);
 
-    static toPrismaWhere<T extends AggregateRoot, K extends keyof T, R>(condition: FilterCondition<T, K>): R {
+    static toPrismaWhere<T extends AggregateRoot, K extends keyof PropsOf<T>, R>(condition: FilterCondition<T, K>): R {
         // 1. Handle Logical Filters (AND/OR/NOT)
         if ('AND' in condition && condition.AND) {
             return { AND: condition.AND.map((c) => this.toPrismaWhere(c)) } as unknown as R;
@@ -39,7 +39,7 @@ export class PrismaQueryMapper {
         const result: Record<string, unknown> = {};
 
         for (const [fieldName, fieldFilter] of Object.entries(condition)) {
-            const filter = fieldFilter as FieldFilter<T[K]>;
+            const filter = fieldFilter as FieldFilter<PropsOf<T>[K]>;
             const rawValue = this.unwrapValue(filter.value);
             const isCaseInsensitive =
                 this.TEXT_SEARCH_OPERATORS.has(filter.operator) ||
@@ -64,7 +64,7 @@ export class PrismaQueryMapper {
      * Translates a single-field FieldOrder into Prisma's orderBy shape.
      * e.g. { field: 'lastUsedAt', direction: 'desc' } -> { lastUsedAt: 'desc' }
      */
-    static toPrismaOrderBy<T extends AggregateRoot, K extends keyof T, R>(order: FieldOrder<T, K>): R {
+    static toPrismaOrderBy<T extends AggregateRoot, K extends keyof PropsOf<T>, R>(order: FieldOrder<T, K>): R {
         return { [order.field]: order.direction } as unknown as R;
     }
 

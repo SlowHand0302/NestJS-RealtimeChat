@@ -1,11 +1,11 @@
 import { AggregateRoot } from '@core/entities/_aggregate-root.interface';
-import { FilterCondition, FieldFilter } from './criteria';
+import { FilterCondition, FieldFilter, PropsOf } from './criteria';
 
-export class FilterBuilder<T extends AggregateRoot, K extends keyof T> {
+export class FilterBuilder<T extends AggregateRoot, K extends keyof PropsOf<T>> {
     private conditions: FilterCondition<T, K>[] = [];
 
     // Add a simple field filter (e.g. name contains "john")
-    field(field: K, filter: FieldFilter<T[K]>): this {
+    field(field: K, filter: FieldFilter<PropsOf<T>[K]>): this {
         this.conditions.push({ [field]: filter });
         return this;
     }

@@ -2,6 +2,7 @@ import { IBaseRepository } from './_base.repository';
 import { Session } from '@core/entities/session.entity';
 import { IdentifierVO } from '@core/value-objects/identifier.vo';
 import { FilterOptions } from './_base.repository';
+import { PropsOf } from '@core/criteria/criteria';
 
 export const SESSION_REPOSITORY = Symbol('ISessionRepository');
 
@@ -25,7 +26,7 @@ export interface ISessionRepository extends Pick<
      */
     findActiveSessionsByUserIdPaginated(
         userId: IdentifierVO,
-        options: Pick<FilterOptions<Session, keyof Session>, 'take' | 'skip' | 'orderBy'>,
+        options: Pick<FilterOptions<Session, keyof PropsOf<Session>>, 'take' | 'skip' | 'orderBy'>,
     ): Promise<Session[]>;
 
     revokeById(id: IdentifierVO): Promise<void>;

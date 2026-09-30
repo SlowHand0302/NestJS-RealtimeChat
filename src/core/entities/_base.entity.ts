@@ -27,7 +27,7 @@ export abstract class BaseEntity<Props = unknown> {
         return this._updatedAt;
     }
 
-    public get deletedAt(): Date {
+    public get deletedAt(): Date | undefined {
         return this._deletedAt;
     }
 
