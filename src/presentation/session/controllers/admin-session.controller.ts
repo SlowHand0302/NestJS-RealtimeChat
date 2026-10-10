@@ -1,12 +1,12 @@
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Get, Delete, Param, Query, HttpCode, UseGuards, Controller, HttpStatus, ParseUUIDPipe } from '@nestjs/common';
 
+import { PaginationQueryDto } from '@shared/dtos/pagination.dto';
+import { PaginatedResult } from '@shared/dtos/paginated.response';
 import { SessionResponseDto } from '../dtos/session-response.dto';
 import { JwtAuthGuard } from '@infrastructure/guards/jwt-auth.guard';
 import { PoliciesGuard } from '@infrastructure/guards/policies.guard';
 import { AdminSessionResponseDto } from '../dtos/admin-session-response.dto';
-import { PaginationQueryDto } from '@presentation/shared/dtos/pagination.dto';
-import { PaginatedResult } from '@presentation/shared/dtos/paginated.response';
 import { VerifyPolicies } from '@infrastructure/decorators/verify-policies.decorator';
 import RevokeSessionUseCase from '@application/use-cases/session/revoke-session.use-case';
 import { CanReadSessionsPolicy } from '@infrastructure/casl/policies/can-read-sessions.policy';

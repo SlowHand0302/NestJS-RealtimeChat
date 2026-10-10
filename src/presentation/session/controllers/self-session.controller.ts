@@ -1,10 +1,10 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+import { PaginationQueryDto } from '@shared/dtos/pagination.dto';
 import { SessionResponseDto } from '../dtos/session-response.dto';
+import { PaginatedResult } from '@shared/dtos/paginated.response';
 import { JwtAuthGuard } from '@infrastructure/guards/jwt-auth.guard';
-import { PaginationQueryDto } from '@presentation/shared/dtos/pagination.dto';
-import { PaginatedResult } from '@presentation/shared/dtos/paginated.response';
 import { CurrentUser } from '@infrastructure/decorators/current-user.decorator';
 import { AuthenticatedPrincipal } from '@infrastructure/principals/authenticated.principal';
 import GetActiveSessionUseCase from '@application/use-cases/session/get-active-session.use-case';

@@ -2,8 +2,8 @@ import { map, Observable } from 'rxjs';
 import { Request, Response } from 'express';
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 
-import { ApiSuccessResponse } from '@presentation/shared/dtos/success.response';
-import { PaginatedApiResponse, PaginatedResult } from '@presentation/shared/dtos/paginated.response';
+import { ApiSuccessResponse } from '@shared/dtos/success.response';
+import { PaginatedApiResponse, PaginatedResult } from '@shared/dtos/paginated.response';
 
 @Injectable()
 export class SuccessResponseInterceptor<T> implements NestInterceptor<
