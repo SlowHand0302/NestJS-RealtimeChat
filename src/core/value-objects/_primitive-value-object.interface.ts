@@ -20,6 +20,11 @@
  * typing in criteria.ts already prevents this at compile time for typed
  * call sites).
  */
-export interface PrimitiveValueObject<P> {
+export type Primitive = string | number | boolean | bigint;
+
+export const PRIMITIVE_VALUE_OBJECT = Symbol('PRIMITIVE_VALUE_OBJECT');
+
+export interface PrimitiveValueObject<P extends Primitive> {
     readonly primitiveValue: P;
+    readonly [PRIMITIVE_VALUE_OBJECT]: true;
 }

@@ -1,11 +1,13 @@
 import { BaseValueObject } from './_base.vo';
-import { PrimitiveValueObject } from './_primitive-value-object.interface';
+import { PRIMITIVE_VALUE_OBJECT, PrimitiveValueObject } from './_primitive-value-object.interface';
 
 interface IdentifierProps {
     readonly value: string;
 }
 
 export class IdentifierVO extends BaseValueObject<IdentifierProps> implements PrimitiveValueObject<string> {
+    public readonly [PRIMITIVE_VALUE_OBJECT] = true as const;
+
     private constructor(props: IdentifierProps) {
         super(props);
     }

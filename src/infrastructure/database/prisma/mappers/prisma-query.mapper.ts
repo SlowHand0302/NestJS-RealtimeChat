@@ -1,7 +1,11 @@
 import { FilterOperator } from '@core/criteria/filter-operator';
 import { AggregateRoot } from '@core/entities/_aggregate-root.interface';
 import { FilterCondition, FieldFilter, FieldOrder, PropsOf } from '@core/criteria/criteria';
-import { PrimitiveValueObject } from '@core/value-objects/_primitive-value-object.interface';
+import {
+    Primitive,
+    PRIMITIVE_VALUE_OBJECT,
+    PrimitiveValueObject,
+} from '@core/value-objects/_primitive-value-object.interface';
 
 export class PrismaQueryMapper {
     private static readonly operatorMap: Record<FilterOperator, string> = {
@@ -88,7 +92,12 @@ export class PrismaQueryMapper {
         return value;
     }
 
-    private static isPrimitiveValueObject(value: unknown): value is PrimitiveValueObject<unknown> {
-        return typeof value === 'object' && value !== null && 'primitiveValue' in value;
+    private static isPrimitiveValueObject(value: unknown): value is PrimitiveValueObject<Primitive> {
+        return (
+            typeof value === 'object' &&
+            value !== null &&
+            PRIMITIVE_VALUE_OBJECT in value &&
+            value[PRIMITIVE_VALUE_OBJECT] === true
+        );
     }
 }
