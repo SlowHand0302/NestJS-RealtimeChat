@@ -24,39 +24,33 @@ export class PrismaQueryMapper {
     private static readonly TEXT_SEARCH_OPERATORS = new Set<FilterOperator>(['contains', 'startsWith', 'endsWith']);
 
     static toPrismaWhere<T extends AggregateRoot, K extends keyof PropsOf<T>, R>(condition: FilterCondition<T, K>): R {
-        // 1. Handle Logical Filters (AND/OR/NOT)
-        if ('AND' in condition && condition.AND) {
-            return { AND: condition.AND.map((c) => this.toPrismaWhere(c)) } as unknown as R;
-        }
-        if ('OR' in condition && condition.OR) {
-            return { OR: condition.OR.map((c) => this.toPrismaWhere(c)) } as unknown as R;
-        }
-        if ('NOT' in condition && condition.NOT) {
-            return { NOT: this.toPrismaWhere(condition.NOT) } as unknown as R;
-        }
-
-        // 2. Handle Field Filters
-        // Every key in `condition` is processed — not just the first — and
-        // combined as an implicit AND, matching Prisma's own default behavior
-        // when multiple fields appear in one `where` object. e.g.:
-        // { id: {...}, userId: {...} } -> { id: {...}, userId: {...} } (both applied)
         const result: Record<string, unknown> = {};
 
         for (const [fieldName, fieldFilter] of Object.entries(condition)) {
+            // 1. Handle AND / OR logical filters
+            if (fieldName === 'AND' || fieldName === 'OR') {
+                result[fieldName] = (fieldFilter as FilterCondition<T, K>[]).map((c) => this.toPrismaWhere(c));
+
+                continue;
+            }
+
+            // 2. Handle NOT logical filter
+            if (fieldName === 'NOT') {
+                result.NOT = this.toPrismaWhere(fieldFilter as FilterCondition<T, K>);
+
+                continue;
+            }
+
+            // 3. Handle ordinary field filters
             const filter = fieldFilter as FieldFilter<PropsOf<T>[K]>;
             const rawValue = this.unwrapValue(filter.value);
+
             const isCaseInsensitive =
                 this.TEXT_SEARCH_OPERATORS.has(filter.operator) ||
                 (filter.operator === 'equals' && 'caseSensitive' in filter && filter.caseSensitive === false);
 
             result[fieldName] = {
                 [this.operatorMap[filter.operator]]: rawValue,
-                // Case-insensitive matching only makes sense for text-pattern
-                // operators. Applying it to 'equals'/'in'/etc. would silently
-                // case-fold values where case is meaningful (UUIDs, hashes,
-                // exact-match identifiers) — including VO-wrapped ids unwrapped
-                // by unwrapValue() above, which are strings by the time they
-                // reach this check but were never meant to be searched as text.
                 ...(isCaseInsensitive && typeof rawValue === 'string' ? { mode: 'insensitive' } : {}),
             };
         }
