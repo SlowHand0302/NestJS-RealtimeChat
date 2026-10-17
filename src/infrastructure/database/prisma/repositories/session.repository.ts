@@ -154,7 +154,7 @@ export class SessionRepository implements ISessionRepository {
         return prismaSessions.map((prismaSession) => SessionMapper.toDomain(prismaSession));
     }
 
-    async findOne(condition?: FilterCondition<Session, keyof PropsOf<Session>>): Promise<Session | null> {
+    async findOne(condition: FilterCondition<Session, keyof PropsOf<Session>>): Promise<Session | null> {
         const prismaWhere = PrismaQueryMapper.toPrismaWhere<Session, keyof PropsOf<Session>, Prisma.SessionWhereInput>(
             condition,
         );

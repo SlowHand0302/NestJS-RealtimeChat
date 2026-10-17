@@ -79,7 +79,7 @@ export class UserRepository implements IUserRepository {
         return prismaUsers.length > 0 ? prismaUsers.map((prismaUser) => UserMapper.toDomain(prismaUser)) : [];
     }
 
-    async findOne(where?: FilterCondition<User, keyof PropsOf<User>>): Promise<User | null> {
+    async findOne(where: FilterCondition<User, keyof PropsOf<User>>): Promise<User | null> {
         const prismaWhere = PrismaQueryMapper.toPrismaWhere<User, keyof PropsOf<User>, Prisma.UserWhereInput>(where);
         const prismaUser = await this.prisma.user.findFirst({
             where: prismaWhere,

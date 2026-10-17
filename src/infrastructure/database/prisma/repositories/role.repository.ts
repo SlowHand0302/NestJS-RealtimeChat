@@ -107,7 +107,7 @@ export class RoleRepository implements IRoleRepository {
         return prismaRoles.length > 0 ? prismaRoles.map((prismaRole) => RoleMapper.toDomain(prismaRole)) : [];
     }
 
-    async findOne(options?: FilterCondition<Role, keyof PropsOf<Role>>): Promise<Role | null> {
+    async findOne(options: FilterCondition<Role, keyof PropsOf<Role>>): Promise<Role | null> {
         const prismaWhere = PrismaQueryMapper.toPrismaWhere<Role, keyof PropsOf<Role>, Prisma.RoleWhereInput>(options);
         const prismaRole = await this.prisma.role.findFirst({
             where: prismaWhere,

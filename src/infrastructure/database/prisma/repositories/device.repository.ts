@@ -92,7 +92,7 @@ export class DeviceRepository implements IDeviceRepository {
         return prismaDevices.map((prismaDevice) => DeviceMapper.toDomain(prismaDevice));
     }
 
-    async findOne(condition?: FilterCondition<Device, keyof PropsOf<Device>>): Promise<Device | null> {
+    async findOne(condition: FilterCondition<Device, keyof PropsOf<Device>>): Promise<Device | null> {
         const prismaWhere = PrismaQueryMapper.toPrismaWhere<Device, keyof PropsOf<Device>, Prisma.DeviceWhereInput>(
             condition,
         );

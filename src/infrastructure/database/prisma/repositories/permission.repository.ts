@@ -69,7 +69,7 @@ export class PermissionRepository implements IPermissionRepository {
             : [];
     }
 
-    async findOne(where?: FilterCondition<Permission, keyof PropsOf<Permission>>): Promise<Permission | null> {
+    async findOne(where: FilterCondition<Permission, keyof PropsOf<Permission>>): Promise<Permission | null> {
         const prismaWhere = PrismaQueryMapper.toPrismaWhere<
             Permission,
             keyof PropsOf<Permission>,

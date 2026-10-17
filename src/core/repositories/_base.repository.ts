@@ -10,7 +10,7 @@ export interface FilterOptions<T extends AggregateRoot, K extends keyof PropsOf<
 export interface IBaseRepository<T extends AggregateRoot> {
     findById(id: IdentifierVO): Promise<T | null>;
     findAll(options?: FilterOptions<T, keyof PropsOf<T>>): Promise<T[]>;
-    findOne(condition?: FilterCondition<T, keyof PropsOf<T>>): Promise<T | null>;
+    findOne(condition: FilterCondition<T, keyof PropsOf<T>>): Promise<T | null>;
     save(entity: T): Promise<void>;
     create(entity: T): Promise<void>;
     createMany(entities: T[]): Promise<void>;
