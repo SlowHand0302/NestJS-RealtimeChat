@@ -166,7 +166,7 @@ export class SessionRepository implements ISessionRepository {
 
     async count(condition?: FilterCondition<Session, keyof PropsOf<Session>>): Promise<number> {
         const prismaWhere = PrismaQueryMapper.toPrismaWhere<Session, keyof PropsOf<Session>, Prisma.SessionWhereInput>(
-            condition,
+            condition ?? {},
         );
         const count = await this.prisma.session.count({
             where: prismaWhere,

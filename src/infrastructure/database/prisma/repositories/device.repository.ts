@@ -104,7 +104,7 @@ export class DeviceRepository implements IDeviceRepository {
 
     async count(condition?: FilterCondition<Device, keyof PropsOf<Device>>): Promise<number> {
         const prismaWhere = PrismaQueryMapper.toPrismaWhere<Device, keyof PropsOf<Device>, Prisma.DeviceWhereInput>(
-            condition,
+            condition ?? {},
         );
         const count = await this.prisma.device.count({
             where: prismaWhere,

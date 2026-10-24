@@ -235,7 +235,9 @@ export class UserRepository implements IUserRepository {
     }
 
     async count(where?: FilterCondition<User, keyof PropsOf<User>>): Promise<number> {
-        const prismaWhere = PrismaQueryMapper.toPrismaWhere<User, keyof PropsOf<User>, Prisma.UserWhereInput>(where);
+        const prismaWhere = PrismaQueryMapper.toPrismaWhere<User, keyof PropsOf<User>, Prisma.UserWhereInput>(
+            where ?? {},
+        );
         const count = await this.prisma.user.count({
             where: prismaWhere,
         });

@@ -216,7 +216,9 @@ export class RoleRepository implements IRoleRepository {
     }
 
     async count(where?: FilterCondition<Role, keyof PropsOf<Role>>): Promise<number> {
-        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Role, keyof PropsOf<Role>, Prisma.RoleWhereInput>(where);
+        const prismaWhere = PrismaQueryMapper.toPrismaWhere<Role, keyof PropsOf<Role>, Prisma.RoleWhereInput>(
+            where ?? {},
+        );
         const count = await this.prisma.role.count({
             where: prismaWhere,
         });

@@ -217,7 +217,7 @@ export class PermissionRepository implements IPermissionRepository {
             Permission,
             keyof PropsOf<Permission>,
             Prisma.PermissionWhereInput
-        >(where);
+        >(where ?? {});
         const count = await this.prisma.permission.count({
             where: prismaWhere,
         });
