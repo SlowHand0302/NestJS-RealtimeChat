@@ -16,7 +16,7 @@ export class SessionMapper {
                 refreshTokenHash: prisma.refreshTokenHash,
                 connectionInfo: connectionInfo,
                 isRevoked: prisma.isRevoked ?? false,
-                expireAt: prisma.expiresAt,
+                expiresAt: prisma.expiresAt,
                 lastUsedAt: prisma.lastUsedAt,
             },
             IdentifierVO.reconstitute(prisma.id),

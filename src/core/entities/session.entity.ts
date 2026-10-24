@@ -8,7 +8,7 @@ interface SessionProps {
     refreshTokenHash: string;
     connectionInfo: ConnectionInfoVO;
     isRevoked: boolean;
-    expireAt: Date;
+    expiresAt: Date;
     lastUsedAt: Date;
 }
 
@@ -24,14 +24,14 @@ export class Session extends AggregateRoot<SessionProps> {
     public static create(
         userId: IdentifierVO,
         deviceId: IdentifierVO,
-        expireAt: Date,
+        expiresAt: Date,
         connectionInfo: ConnectionInfoVO,
     ) {
         return new Session({
             userId,
             deviceId,
             refreshTokenHash: '',
-            expireAt,
+            expiresAt,
             connectionInfo,
             isRevoked: false,
             lastUsedAt: new Date(),
@@ -48,11 +48,11 @@ export class Session extends AggregateRoot<SessionProps> {
 
     // Business Methods
     public isValid(): boolean {
-        return !this.props.isRevoked && new Date() < this.props.expireAt;
+        return !this.props.isRevoked && new Date() < this.props.expiresAt;
     }
 
     public isExpired(): boolean {
-        return new Date() > this.props.expireAt;
+        return new Date() > this.props.expiresAt;
     }
 
     public revoke(): void {
@@ -63,12 +63,12 @@ export class Session extends AggregateRoot<SessionProps> {
         this.touch();
     }
 
-    public rotate(newRefreshTokenHash: string, newExpireAt: Date): void {
+    public rotate(newRefreshTokenHash: string, newexpiresAt: Date): void {
         if (!this.isValid()) {
             throw new Error('Cannot rotate invalid session');
         }
         this.props.refreshTokenHash = newRefreshTokenHash;
-        this.props.expireAt = newExpireAt;
+        this.props.expiresAt = newexpiresAt;
         this.recordUsage();
     }
 
@@ -103,7 +103,7 @@ export class Session extends AggregateRoot<SessionProps> {
     }
 
     get expiresAt(): Date {
-        return this.props.expireAt;
+        return this.props.expiresAt;
     }
 
     get lastUsedAt(): Date {
