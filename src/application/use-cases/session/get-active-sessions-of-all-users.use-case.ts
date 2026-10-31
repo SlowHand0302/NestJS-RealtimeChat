@@ -10,6 +10,8 @@ import {
 import { IDeviceRepository, DEVICE_REPOSITORY } from '@core/repositories/device.repository';
 import { ISessionRepository, SESSION_REPOSITORY } from '@core/repositories/session.repository';
 import { GetActiveSessionsOfAllUsersDto } from '@application/dtos/session/get-active-sessions-of-all-users.dto';
+import { FilterCondition, PropsOf } from '@core/criteria/criteria';
+import { Session } from '@core/entities/session.entity';
 
 const DEFAULT_TAKE = 20;
 const DEFAULT_SKIP = 0;
@@ -31,9 +33,9 @@ export default class GetActiveSessionsOfAllUsersUseCase extends BaseUseCase<
     async execute(input: GetActiveSessionsOfAllUsersDto): Promise<GetActiveSessionsOfAllUsersPaginatedResponseDto> {
         const now = new Date();
 
-        const activeCondition = {
-            isRevoked: { operator: 'equals' as const, value: false },
-            expiresAt: { operator: 'gt' as const, value: now },
+        const activeCondition: FilterCondition<Session, keyof PropsOf<Session>> = {
+            isRevoked: { operator: 'equals', value: false },
+            expiresAt: { operator: 'gt', value: now },
         };
 
         const [sessions, total] = await Promise.all([

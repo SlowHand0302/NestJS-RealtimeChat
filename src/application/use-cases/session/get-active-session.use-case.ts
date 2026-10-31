@@ -2,11 +2,13 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { BaseUseCase } from '../_base.use-case';
 import { Device } from '@core/entities/device.entity';
+import { Session } from '@core/entities/session.entity';
 import {
     GetActiveSessionResponseDto,
     GetActiveSessionPaginatedResponseDto,
 } from '@application/dtos/session/get-active-session.response';
 import { IdentifierVO } from '@core/value-objects/identifier.vo';
+import { FilterCondition, PropsOf } from '@core/criteria/criteria';
 import { GetActiveSessionDto } from '@application/dtos/session/get-active-session.dto';
 import { ISessionRepository, SESSION_REPOSITORY } from '@core/repositories/session.repository';
 import { IDeviceRepository, DEVICE_REPOSITORY } from '@core/repositories/device.repository';
@@ -32,10 +34,10 @@ export default class GetActiveSessionUseCase extends BaseUseCase<
         const userId = IdentifierVO.reconstitute(input.userId);
         const now = new Date();
 
-        const activeCondition = {
-            userId: { operator: 'equals' as const, value: userId }, // was: value: userId.value
-            isRevoked: { operator: 'equals' as const, value: false },
-            expiresAt: { operator: 'gt' as const, value: now },
+        const activeCondition: FilterCondition<Session, keyof PropsOf<Session>> = {
+            userId: { operator: 'equals', value: userId },
+            isRevoked: { operator: 'equals', value: false },
+            expiresAt: { operator: 'gt', value: now },
         };
 
         const [sessions, total] = await Promise.all([
