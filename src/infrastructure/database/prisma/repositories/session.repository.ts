@@ -63,6 +63,14 @@ export class SessionRepository implements ISessionRepository {
         userId: IdentifierVO,
         options: Pick<FilterOptions<Session, keyof PropsOf<Session>>, 'take' | 'skip' | 'orderBy'>,
     ): Promise<Session[]> {
+        const prismaOrderBy = options.orderBy
+            ? PrismaQueryMapper.toPrismaOrderBy<
+                  Session,
+                  keyof PropsOf<Session>,
+                  Prisma.SessionOrderByWithRelationInput
+              >(options.orderBy)
+            : undefined;
+
         const prismaSessions = await this.prisma.session.findMany({
             where: {
                 userId: userId.value,
@@ -72,6 +80,7 @@ export class SessionRepository implements ISessionRepository {
             ...(options && {
                 take: options.take,
                 skip: options.skip,
+                orderBy: prismaOrderBy,
             }),
         });
         return prismaSessions.map((prismaSession) => SessionMapper.toDomain(prismaSession));
