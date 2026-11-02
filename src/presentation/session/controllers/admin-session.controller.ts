@@ -9,7 +9,6 @@ import { PoliciesGuard } from '@infrastructure/guards/policies.guard';
 import { AdminSessionResponseDto } from '../dtos/admin-session-response.dto';
 import { VerifyPolicies } from '@infrastructure/decorators/verify-policies.decorator';
 import RevokeSessionUseCase from '@application/use-cases/session/revoke-session.use-case';
-import { CanReadSessionsPolicy } from '@infrastructure/casl/policies/can-read-sessions.policy';
 import GetActiveSessionUseCase from '@application/use-cases/session/get-active-session.use-case';
 import { CanManageSessionsPolicy } from '@infrastructure/casl/policies/can-manage-sessions.policy';
 import RevokeAllSessionsOfUserUseCase from '@application/use-cases/session/revoke-all-sessions-of-user.use-case';
@@ -28,7 +27,7 @@ export class AdminSessionController {
     ) {}
 
     @Get('sessions')
-    @VerifyPolicies(new CanReadSessionsPolicy())
+    @VerifyPolicies(new CanManageSessionsPolicy())
     @ApiOperation({ summary: 'List active sessions across all users' })
     @ApiOkResponse({ type: AdminSessionResponseDto, isArray: true })
     async getAllActiveSessions(@Query() query: PaginationQueryDto): Promise<PaginatedResult<AdminSessionResponseDto>> {
@@ -44,7 +43,7 @@ export class AdminSessionController {
     }
 
     @Get('users/:userId/sessions')
-    @VerifyPolicies(new CanReadSessionsPolicy())
+    @VerifyPolicies(new CanManageSessionsPolicy())
     @ApiOperation({ summary: "List a specific user's active sessions" })
     @ApiOkResponse({ type: SessionResponseDto, isArray: true })
     async getActiveSessionsForUser(
