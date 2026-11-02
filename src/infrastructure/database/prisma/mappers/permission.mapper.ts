@@ -29,7 +29,9 @@ export class PermissionMapper {
             action: permission.action,
             description: permission.description || null,
             fields: permission.isFieldScoped() ? permission.fields : [],
-            conditions: permission.isConditional() ? permission.conditions : null,
+            // The column is a required Json, so "no conditions" is stored as {} (the entity getter
+            // already normalizes undefined to {}), never as null.
+            conditions: permission.conditions,
             inverted: permission.inverted,
         };
     }
