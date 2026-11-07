@@ -1,17 +1,27 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsArray, IsBoolean, IsEnum, IsIn, IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
+import {
+    IsArray,
+    IsBoolean,
+    IsEnum,
+    IsIn,
+    IsNotEmpty,
+    IsObject,
+    IsOptional,
+    IsString,
+    ValidateIf,
+} from 'class-validator';
 
 import { PermissionActionPropEnum } from '@core/entities/permission.entity';
 import { APP_SUBJECT_NAMES } from '@infrastructure/casl/casl-ability.types';
 
 export class UpdatePermissionRequestDto {
     @ApiPropertyOptional({ enum: PermissionActionPropEnum, example: PermissionActionPropEnum.READ })
-    @IsOptional()
+    @ValidateIf((_, value) => value !== undefined)
     @IsEnum(PermissionActionPropEnum)
     action?: PermissionActionPropEnum;
 
     @ApiPropertyOptional({ enum: APP_SUBJECT_NAMES, example: 'PermissionSubject' })
-    @IsOptional()
+    @ValidateIf((_, value) => value !== undefined)
     @IsString()
     @IsNotEmpty()
     @IsIn(APP_SUBJECT_NAMES)
