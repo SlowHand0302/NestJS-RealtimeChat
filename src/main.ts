@@ -6,6 +6,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { AppConfig } from '@infrastructure/config/app.config';
 import configSwagger from '@infrastructure/config/swagger.config';
+import { HttpExceptionFilter } from '@infrastructure/filters/http-exception.filter';
 import { SuccessResponseInterceptor } from '@infrastructure/interceptors/success-response.interceptor';
 
 async function bootstrap() {
@@ -27,6 +28,7 @@ async function bootstrap() {
     );
 
     app.useGlobalInterceptors(new SuccessResponseInterceptor());
+    app.useGlobalFilters(new HttpExceptionFilter());
 
     await app.listen(appConfig.port);
     console.log(`🚀 Server running on http://localhost:${appConfig.port}`);
